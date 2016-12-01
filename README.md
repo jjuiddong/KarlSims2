@@ -1,2 +1,3 @@
 # KarlSims2
-Karl Sims project, upgrade
+Upgrade Karl Sims project
+

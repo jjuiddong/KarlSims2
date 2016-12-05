@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="creature\Creature.cpp">
+      <Filter>Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="creature\Effector.cpp">
+      <Filter>Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="creature\Joint.cpp">
+      <Filter>Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="creature\NeuralNet.cpp">
+      <Filter>Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="creature\PhenotypeNode.cpp">
+      <Filter>Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="creature\PhotoSensor.cpp">
+      <Filter>Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="creature\VisionSensor.cpp">
+      <Filter>Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\DiagramUtility.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\EditCursor.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\GenotypeController.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\GenotypeNode.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\OrientationEditController.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\PopupDiagrams.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\ScaleCursor.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\SimpleCamera.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="diagram\DiagramGlobal.cpp">
+      <Filter>Diagram</Filter>
+    </ClCompile>
+    <ClCompile Include="genetic\GeneticAlgorithm.cpp">
+      <Filter>Genetic</Filter>
+    </ClCompile>
+    <ClCompile Include="genetic\Genome.cpp">
+      <Filter>Genetic</Filter>
+    </ClCompile>
+    <ClCompile Include="genoype\GenotypeScanner.cpp">
+      <Filter>Genotype</Filter>
+    </ClCompile>
+    <ClCompile Include="genoype\GenotypeParser.cpp">
+      <Filter>Genotype</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\FileLoader.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\Utility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RenderComposition.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RendererBezierShape.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RendererCompositionShape.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RendererModelShape.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RendererSkinModelShape.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RenderModelActor.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\MeshCompositionUtility.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RenderBezierActor.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="EvolvedVirtualCreatures.cpp" />
+    <ClCompile Include="JointTestSample.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Creature">
+      <UniqueIdentifier>{d59734d1-4f7c-4495-a283-4bc32a9c4d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Diagram">
+      <UniqueIdentifier>{34e13241-2183-403f-bce8-972bf66db3fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Event">
+      <UniqueIdentifier>{6f39a3ab-2ba8-4deb-a884-4d7015feac7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Genetic">
+      <UniqueIdentifier>{a1d4dab5-c76e-4210-a458-12e05eb617c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Genotype">
+      <UniqueIdentifier>{565aa859-7aca-402a-8b72-28e03bcf83cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{ef0de89c-2747-46d3-a6ec-8822d133cb9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{c6448d8d-3650-4a65-bb07-6c470e401c42}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="creature\AngularSensor.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\Creature.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\Effector.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\Joint.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\MuscleEffector.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\NeuralNet.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\PhenotypeNode.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\PhotoSensor.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\Sensor.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="creature\VisionSensor.h">
+      <Filter>Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\DiagramGlobal.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\DiagramUtility.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\EditCursor.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\GenotypeController.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\GenotypeNode.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\OrientationEditController.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\PopupDiagrams.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\ScaleCursor.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="diagram\SimpleCamera.h">
+      <Filter>Diagram</Filter>
+    </ClInclude>
+    <ClInclude Include="event\InputEvent.h">
+      <Filter>Event</Filter>
+    </ClInclude>
+    <ClInclude Include="genetic\GeneticAlgorithm.h">
+      <Filter>Genetic</Filter>
+    </ClInclude>
+    <ClInclude Include="genetic\Genome.h">
+      <Filter>Genetic</Filter>
+    </ClInclude>
+    <ClInclude Include="genoype\GenotypeParser.h">
+      <Filter>Genotype</Filter>
+    </ClInclude>
+    <ClInclude Include="genoype\GenotypeScanner.h">
+      <Filter>Genotype</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\FileLoader.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\structdef.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\Utility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RenderComposition.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RendererBezierShape.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RendererCompositionShape.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RendererModelShape.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RendererSkinModelShape.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RenderModelActor.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\MeshCompositionUtility.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RenderBezierActor.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Configure.h" />
+    <ClInclude Include="EvolvedVirtualCreatures.h" />
+    <ClInclude Include="JointTestSample.h" />
+  </ItemGroup>
+</Project>

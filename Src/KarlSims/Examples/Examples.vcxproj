@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}</ProjectGuid>
+    <ProjectGuid>{FE5629CB-5385-45E7-A79E-09484B4C93F4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>EvolvedVirtualCreatures</RootNamespace>
+    <RootNamespace>Examples</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -86,7 +86,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(PHYSX_DIR)/Samples/SampleBase;$(PHYSX_DIR)/Samples/PxToolkit/include;$(PHYSX_DIR)/Samples/SampleFramework/framework/include;$(PHYSX_DIR)/Samples/SampleFramework/renderer/include;$(PHYSX_DIR)/Samples/SampleFramework/platform/include;$(PHYSX_DIR)/Include;$(PHYSX_DIR)/Source/foundation/include;$(PHYSX_DIR)/Source/Common/src;$(PHYSX_DIR)/Source/GeomUtils/headers;$(PHYSX_DIR)/Source/GeomUtils/include;$(PHYSX_DIR)/Source/GeomUtils/src/contact;$(PHYSX_DIR)/Source/GeomUtils/src/common;$(PHYSX_DIR)/Source/GeomUtils/src/convex;$(PHYSX_DIR)/Source/GeomUtils/src/distance;$(PHYSX_DIR)/Source/GeomUtils/src/gjk;$(PHYSX_DIR)/Source/GeomUtils/src/intersection;$(PHYSX_DIR)/Source/GeomUtils/src/mesh;$(PHYSX_DIR)/Source/GeomUtils/src/Ice;$(PHYSX_DIR)/Source/GeomUtils/src/hf;$(PHYSX_DIR)/Source/GeomUtils/src/pcm;$(PHYSX_DIR)/Include/foundation;$(PHYSX_DIR)/Include/common;$(PHYSX_DIR)/Samples/SampleCCTSharedCode;$(PHYSX_DIR)/Source/PhysXVehicle/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -113,8 +113,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -131,8 +130,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -147,84 +145,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="creature\Creature.cpp" />
-    <ClCompile Include="creature\Effector.cpp" />
-    <ClCompile Include="creature\Joint.cpp" />
-    <ClCompile Include="creature\NeuralNet.cpp" />
-    <ClCompile Include="creature\PhenotypeNode.cpp" />
-    <ClCompile Include="creature\PhotoSensor.cpp" />
-    <ClCompile Include="creature\VisionSensor.cpp" />
-    <ClCompile Include="diagram\DiagramGlobal.cpp" />
-    <ClCompile Include="diagram\DiagramUtility.cpp" />
-    <ClCompile Include="diagram\EditCursor.cpp" />
-    <ClCompile Include="diagram\GenotypeController.cpp" />
-    <ClCompile Include="diagram\GenotypeNode.cpp" />
-    <ClCompile Include="diagram\OrientationEditController.cpp" />
-    <ClCompile Include="diagram\PopupDiagrams.cpp" />
-    <ClCompile Include="diagram\ScaleCursor.cpp" />
-    <ClCompile Include="diagram\SimpleCamera.cpp" />
-    <ClCompile Include="EvolvedVirtualCreatures.cpp" />
-    <ClCompile Include="genetic\GeneticAlgorithm.cpp" />
-    <ClCompile Include="genetic\Genome.cpp" />
-    <ClCompile Include="genoype\GenotypeParser.cpp" />
-    <ClCompile Include="genoype\GenotypeScanner.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="renderer\MeshCompositionUtility.cpp" />
-    <ClCompile Include="renderer\RenderBezierActor.cpp" />
-    <ClCompile Include="renderer\RenderComposition.cpp" />
-    <ClCompile Include="renderer\RendererBezierShape.cpp" />
-    <ClCompile Include="renderer\RendererCompositionShape.cpp" />
-    <ClCompile Include="renderer\RendererModelShape.cpp" />
-    <ClCompile Include="renderer\RendererSkinModelShape.cpp" />
-    <ClCompile Include="renderer\RenderModelActor.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="utility\FileLoader.cpp" />
-    <ClCompile Include="utility\Utility.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Configure.h" />
-    <ClInclude Include="creature\AngularSensor.h" />
-    <ClInclude Include="creature\Creature.h" />
-    <ClInclude Include="creature\Effector.h" />
-    <ClInclude Include="creature\Joint.h" />
-    <ClInclude Include="creature\MuscleEffector.h" />
-    <ClInclude Include="creature\NeuralNet.h" />
-    <ClInclude Include="creature\PhenotypeNode.h" />
-    <ClInclude Include="creature\PhotoSensor.h" />
-    <ClInclude Include="creature\Sensor.h" />
-    <ClInclude Include="creature\VisionSensor.h" />
-    <ClInclude Include="diagram\DiagramGlobal.h" />
-    <ClInclude Include="diagram\DiagramUtility.h" />
-    <ClInclude Include="diagram\EditCursor.h" />
-    <ClInclude Include="diagram\GenotypeController.h" />
-    <ClInclude Include="diagram\GenotypeNode.h" />
-    <ClInclude Include="diagram\OrientationEditController.h" />
-    <ClInclude Include="diagram\PopupDiagrams.h" />
-    <ClInclude Include="diagram\ScaleCursor.h" />
-    <ClInclude Include="diagram\SimpleCamera.h" />
-    <ClInclude Include="event\InputEvent.h" />
-    <ClInclude Include="EvolvedVirtualCreatures.h" />
-    <ClInclude Include="genetic\GeneticAlgorithm.h" />
-    <ClInclude Include="genetic\Genome.h" />
-    <ClInclude Include="genoype\GenotypeParser.h" />
-    <ClInclude Include="genoype\GenotypeScanner.h" />
-    <ClInclude Include="global.h" />
-    <ClInclude Include="renderer\MeshCompositionUtility.h" />
-    <ClInclude Include="renderer\RenderBezierActor.h" />
-    <ClInclude Include="renderer\RenderComposition.h" />
-    <ClInclude Include="renderer\RendererBezierShape.h" />
-    <ClInclude Include="renderer\RendererCompositionShape.h" />
-    <ClInclude Include="renderer\RendererModelShape.h" />
-    <ClInclude Include="renderer\RendererSkinModelShape.h" />
-    <ClInclude Include="renderer\RenderModelActor.h" />
+    <ClInclude Include="joint.h" />
+    <ClInclude Include="RevoluteJointTest.h" />
+    <ClInclude Include="SphericalJointTest.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="utility\FileLoader.h" />
-    <ClInclude Include="utility\structdef.h" />
-    <ClInclude Include="utility\Utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="joint.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="RevoluteJointTest.cpp" />
+    <ClCompile Include="SphericalJointTest.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common\Common\Common.vcxproj">

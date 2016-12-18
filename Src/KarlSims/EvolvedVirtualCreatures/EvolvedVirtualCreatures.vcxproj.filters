@@ -94,7 +94,6 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="EvolvedVirtualCreatures.cpp" />
-    <ClCompile Include="JointTestSample.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Creature">
@@ -230,6 +229,5 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Configure.h" />
     <ClInclude Include="EvolvedVirtualCreatures.h" />
-    <ClInclude Include="JointTestSample.h" />
   </ItemGroup>
 </Project>

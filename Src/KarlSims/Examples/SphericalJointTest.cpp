@@ -1,6 +1,10 @@
+// Examples.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "SphericalJointTest.h"
 #include "stdafx.h"
 #include "SamplePreprocessor.h"
-#include "JointTestSample.h"
 #include "SampleUtils.h"
 #include "SampleConsole.h"
 #include "RendererMemoryMacros.h"
@@ -19,47 +23,48 @@
 #include <SampleUserInputIds.h>
 #include <SampleUserInputDefines.h>
 
-#include "Creature/Creature.h"
-#include "genetic/GeneticAlgorithm.h"
-#include "diagram/GenotypeController.h"
-
 
 
 using namespace SampleRenderer;
 using namespace SampleFramework;
 
-REGISTER_SAMPLE(CJointTestSample, "JointTest Sample")
+REGISTER_SAMPLE(CSphericalJointTestSample, "SphericalJoint Test")
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CJointTestSample::CJointTestSample(PhysXSampleApplication& app) :
+CSphericalJointTestSample::CSphericalJointTestSample(PhysXSampleApplication& app) :
 	PhysXSample(app)
 	, m_ElapsTime(NULL)
+	, m_genJoint(-1)
+	, m_joint1(NULL)
+	, m_joint2(NULL)
+	, m_deltaTime(0)
 {
 	mCreateGroundPlane = true;
-	//m_IsApplyCustomGravity = true;
 }
 
-CJointTestSample::~CJointTestSample()
+CSphericalJointTestSample::~CSphericalJointTestSample()
 {
 }
 
-void CJointTestSample::onShutdown()
+void CSphericalJointTestSample::onShutdown()
 {
-	BOOST_FOREACH(auto kv, m_Materials)
+	for (auto kv : m_Materials)
 		kv.second->release();
 	m_Materials.clear();
+
+	for (auto &j : m_joints)
+		delete j;
+	m_joints.clear();
 
 	PhysXSample::onShutdown();
 }
 
 
-void CJointTestSample::onInit()
+void CSphericalJointTestSample::onInit()
 {
 	PhysXSample::onInit();
-
-	CFileLoader::Get()->Init(NULL);
 
 	srand(timeGetTime());
 	mApplication.setMouseCursorHiding(true);
@@ -75,24 +80,24 @@ void CJointTestSample::onInit()
 @brief
 @date 2014-01-16
 */
-void CJointTestSample::customizeRender()
+void CSphericalJointTestSample::customizeRender()
 {
 }
 
 
-void	CJointTestSample::onTickPreRender(float dtime)
+void	CSphericalJointTestSample::onTickPreRender(float dtime)
 {
 	PhysXSample::onTickPreRender(dtime);
 	PxSceneWriteLock scopedLock(*mScene);
 }
 
-void	CJointTestSample::onTickPostRender(float dtime)
+void	CSphericalJointTestSample::onTickPostRender(float dtime)
 {
 	PhysXSample::onTickPostRender(dtime);
 }
 
 
-void CJointTestSample::collectInputEvents(std::vector<const SampleFramework::InputEvent*>& inputEvents)
+void CSphericalJointTestSample::collectInputEvents(std::vector<const SampleFramework::InputEvent*>& inputEvents)
 {
 	PhysXSample::collectInputEvents(inputEvents);
 	getApplication().getPlatform()->getSampleUserInput()->unregisterInputEvent(CAMERA_SPEED_INCREASE);
@@ -134,193 +139,153 @@ void CJointTestSample::collectInputEvents(std::vector<const SampleFramework::Inp
 @brief
 @date 2013-12-03
 */
-void CJointTestSample::spawnNode(const int key)
+void CSphericalJointTestSample::spawnNode(const int key)
 {
 	PxSceneWriteLock scopedLock(*mScene);
 
 	PxVec3 pos = getCamera().getPos() + (getCamera().getViewDir()*10.f);
 	const PxVec3 vel = getCamera().getViewDir() * 20.f;
 
-	evc::CCreature *creature = NULL;
 	bool IsCreature = true;
 	switch (key)
 	{
 	case SPAWN_DEBUG_OBJECT:
 	{
-		// spawn 2 rigid body
-		const PxReal h = 4;
-		const PxReal dim = 0.5f;
-		PxRigidDynamic *actor0 = createBox(PxVec3(0, h, 0), PxVec3(dim, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 1, 1)));
-		PxRigidDynamic *actor1 = createBox(PxVec3(4, h, 0), PxVec3(dim, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 0, 0)));
+		spawnDebugObject();
 	}
 	break;
 
 	case SPAWN_DEBUG_OBJECT2:
 	{
-		// Fixed Joint Test
-		// spawn 2 fixed joint rigid body
+		// Spherical Joint Test
+		PxSceneWriteLock scopedLock(*mScene);
+		m_genJoint = 0;
+
 		const PxReal h = 4;
-		const PxReal dim = 0.5f;
-		const PxVec3 pos1(0, h, 0);
-		const PxVec3 pos2(4, h, 2);
-		PxRigidDynamic *actor0 = createBox(pos1, PxVec3(dim, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 0, 0)));
-		PxRigidDynamic *actor1 = createBox(pos2, PxVec3(dim, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 1, 0)));
+		const PxReal dim = 0.3f;
+		const PxReal force = 3;
+		const PxVec3 bpos1(0, h, 0);
+		const PxVec3 bpos2(0, h, -dim * 2 - 0.1f);
 
-		// joint position is center of actor0,1
-		PxVec3 v = pos2 - pos1;
-		PxReal len =  v.magnitude();
-		v.normalize();
-		PxVec3 jpos = v*len + pos1;
+		int i = 0;
+		const PxReal len = dim*1.5f;
+		const PxVec3 pos0(i*(len + 0.1f) * 2, h, 0);
+		PxTransform actor0Tm(pos0);
+		PxRigidDynamic *actor0 = createBox2(actor0Tm, PxVec3(len, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 1, 1)));
+		actor0->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
-		PxTransform tm0, tm1;
-		tm0 = PxTransform(pos2 - jpos);
-		tm1 = PxTransform(pos1 - jpos);
-		PxFixedJoint *j = PxFixedJointCreate(getPhysics(), actor0, tm0, actor1, tm1);
+		i++;
+		const PxVec3 pos1(i*(len + 0.1f) * 2, h, 0);
+		PxTransform actor1Tm(pos1);
+		PxRigidDynamic *actor1 = createBox2(actor1Tm, PxVec3(len, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 0, 0)));
+
+
+		PxTransform jointTm((actor0Tm.p + actor1Tm.p) * 0.5f);
+		PxTransform tm0 = actor0Tm.getInverse() * jointTm;
+		PxTransform tm1 = actor1Tm.getInverse() * jointTm;
+		if (PxSphericalJoint *j = PxSphericalJointCreate(getPhysics(), actor0, tm0, actor1, tm1))
+		//if (PxDistanceJoint *j = PxDistanceJointCreate(getPhysics(), actor0, tm0, actor1, tm1))
+		{
+			j->setLimitCone(PxJointLimitCone(PxPi/4, PxPi/4));
+			j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+		}
 	}
 	break;
 
 	case SPAWN_DEBUG_OBJECT3:
 	{
-		// Test RevoluteJoint
-		const PxReal h = 4;
-		const PxReal dim = 0.5f;
-		const PxVec3 pos1(0, h, 0);
-		const PxVec3 pos2(3, h, 0);
-		PxRigidDynamic *actor0 = createBox(pos1, PxVec3(dim, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 0, 0)));
-		PxRigidDynamic *actor1 = createBox(pos2, PxVec3(dim*2, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 1, 0)));
-		actor0->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-
-		// joint position is center of actor0,1
-		PxVec3 v = pos2 - pos1;
-		PxReal len = v.magnitude();
-		v.normalize();
-		PxVec3 jpos = v*len + pos1;
-
-		PxQuat q1 = rotationArc(PxVec3(1, 0, 0), PxVec3(0, 0, -1));
-
-		PxTransform tm0, tm1;
-		tm0 = PxTransform(pos2 - jpos);
-		tm1 = PxTransform(pos1 - jpos) *  PxTransform(q1);
-		PxFixedJoint *j = PxFixedJointCreate(getPhysics(), actor0, tm0, actor1, tm1);
-
-		//if (PxRevoluteJoint*j = PxRevoluteJointCreate(getPhysics(), actor0, tm0, actor1, tm1))
-		//{
-		//	j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);
-		//}
-	}
-	break;
-
-	case SPAWN_DEBUG_OBJECT4:
-	{
-		// Test Revolute Joint
+		// Test joint connection
+		//   ===||====
+		//   ===||====
+		//
 		PxSceneWriteLock scopedLock(*mScene);
+		m_genJoint = 0;
 
 		const PxReal h = 4;
 		const PxReal dim = 0.3f;
+		const PxReal force = 3;
 		const PxVec3 bpos1(0, h, 0);
-		const PxVec3 bpos2(0, h, dim*2+0.1f);
-		const PxVec3 pos1(0, h, 0);
-		const PxVec3 pos2(3, h, 0);
-		PxRigidDynamic *body0 = createBox(bpos1, PxVec3(dim*1.5f, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 0, 0)));
-		body0->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-		PxRigidDynamic *body1 = createBox(bpos2, PxVec3(dim *1.5f, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 1, 1)));
-		body1->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+		const PxVec3 bpos2(0, h, -dim * 2 - 0.1f);
+		PxRigidDynamic *parentBody = NULL;
+		PxTransform parentTm;
 
-		PxRigidDynamic *arm1 = createBox(pos2, PxVec3(dim*2, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 1, 0)));
-
-		PxQuat q0 = rotationArc(PxVec3(1, 0, 0), PxVec3(1, 0, -1).getNormalized());
-		PxQuat q1 = rotationArc(PxVec3(1, 0, 0), PxVec3(0, 0, -1));
-
-		PxTransform tm0, tm1;
-		tm0 = PxTransform(q0);
-		tm1 = PxTransform(q1) * PxTransform(PxVec3(0, 0, -2));
-
-		if (PxRevoluteJoint*j = PxRevoluteJointCreate(getPhysics(), body1, tm0, arm1, tm1))
+		for (int i = 0; i < 5; ++i)
 		{
-			j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);
-		}
-	}
-	break;
+			const PxReal len = dim*1.5f;
+			const PxVec3 pos1(i*(len + 0.1f) * 2, h, 0);
+			PxTransform actor0Tm(pos1);
+			PxRigidDynamic *body0 = createBox2(actor0Tm, PxVec3(len, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 1, 1)));
 
-	case SPAWN_DEBUG_OBJECT5:
-	{
-		// Test Revolute Joint Force Test
-		PxSceneWriteLock scopedLock(*mScene);
+			const PxVec3 legPos1(i*(len + 0.1f) * 2, h, dim * 8 + 0.1f);
+			PxTransform actor1Tm(legPos1, rotationArc(PxVec3(1, 0, 0), PxVec3(0, 0, -1)));
+			PxRigidDynamic *leg0 = createBox2(actor1Tm, PxVec3(len, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 0, 0)));
 
-		const PxReal h = 4;
-		const PxReal dim = 0.3f;
-		const PxVec3 bpos1(0, h, 0);
-		const PxVec3 bpos2(0, h, dim * 2 + 0.1f);
-		const PxVec3 pos1(0, h, 0);
-		const PxVec3 pos2(3, h, 0);
-		PxRigidDynamic *body0 = createBox(bpos1, PxVec3(dim*1.5f, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 0, 0)));
-		body0->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-		PxRigidDynamic *body1 = createBox(bpos2, PxVec3(dim *1.5f, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 1, 1)));
-		body1->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-
-		PxRigidDynamic *arm1 = createBox(pos2, PxVec3(dim * 2, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 1, 0)));
-
-		PxQuat q0 = rotationArc(PxVec3(1, 0, 0), PxVec3(1, 0, -1).getNormalized());
-		PxQuat q1 = rotationArc(PxVec3(1, 0, 0), PxVec3(0, 0, -1));
-
-		PxTransform tm0, tm1;
-		tm0 = PxTransform(q0);
-		tm1 = PxTransform(q1) * PxTransform(PxVec3(0, 0, -2));
-
-		if (PxRevoluteJoint*j = PxRevoluteJointCreate(getPhysics(), body1, tm0, arm1, tm1))
-		{
-			j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);
-		}
-	}
-	break;
-
-	case SPAWN_DEBUG_OBJECT6:
-	case SPAWN_DEBUG_OBJECT9:
-	break;
-	}
-
-	RET(!creature);
-}
-
-
-/**
-@brief
-@date 2013-12-03
-*/
-void CJointTestSample::pickup()
-{
-	PxU32 width;
-	PxU32 height;
-	mApplication.getPlatform()->getWindowSize(width, height);
-	mPicking->moveCursor(width / 2, height / 2);
-	mPicking->lazyPick();
-	PxActor *actor = mPicking->letGo();
-	//PxRigidDynamic *rigidActor = static_cast<PxRigidDynamic*>(actor->is<PxRigidDynamic>());
-	PxRigidDynamic *rigidActor = (PxRigidDynamic*)actor;
-	if (rigidActor)
-	{
-		const PxVec3 pos = getCamera().getPos() + (getCamera().getViewDir()*10.f);
-		const PxVec3 vel = getCamera().getViewDir() * 20.f;
-
-		rigidActor->addForce(getCamera().getViewDir()*g_pDbgConfig->force);
-
-		PxU32 nbShapes = rigidActor->getNbShapes();
-		if (!nbShapes)
-			return;
-
-		PxShape** shapes = (PxShape**)SAMPLE_ALLOC(sizeof(PxShape*)*nbShapes);
-		PxU32 nb = rigidActor->getShapes(shapes, nbShapes);
-		PX_ASSERT(nb == nbShapes);
-		for (PxU32 i = 0; i<nbShapes; i++)
-		{
-			RenderBaseActor *renderActor = getRenderActor(rigidActor, shapes[i]);
-			if (renderActor)
 			{
-				renderActor->setRenderMaterial(mManagedMaterials[1]);
+				PxTransform jointTm(PxVec3(0, h, legPos1.z / 2));
+				PxTransform tm0 = actor0Tm.getInverse() * jointTm;
+				PxTransform tm1 = actor1Tm.getInverse() * jointTm;
+
+				if (PxRevoluteJoint*j = PxRevoluteJointCreate(getPhysics(), body0, tm0, leg0, tm1))
+				{
+					j->setProjectionAngularTolerance(0);
+					j->setProjectionLinearTolerance(0);
+					j->setLimit(PxJointAngularLimitPair(-PxPi / 4, PxPi / 4, 0.1f)); // upper, lower, tolerance
+					j->setRevoluteJointFlag(PxRevoluteJointFlag::eLIMIT_ENABLED, true);
+					j->setDriveVelocity(force);
+					j->setRevoluteJointFlag(PxRevoluteJointFlag::eDRIVE_ENABLED, true);
+					j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);
+
+					m_joints.push_back(new cJoint(body0, leg0, j));
+				}
 			}
+
+			const PxVec3 legPos2(i*(len + 0.1f) * 2, h, -(dim * 8 + 0.1f));
+			PxTransform actor2Tm(legPos2, rotationArc(PxVec3(1, 0, 0), PxVec3(0, 0, -1)));
+			PxRigidDynamic *leg1 = createBox2(actor2Tm, PxVec3(len, dim, dim), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0, 1, 0)));
+
+			{
+				PxTransform jointTm(PxVec3(0, h, legPos2.z / 2));
+				PxTransform tm0 = actor0Tm.getInverse() * jointTm;
+				PxTransform tm1 = actor2Tm.getInverse() * jointTm;
+
+				if (PxRevoluteJoint*j = PxRevoluteJointCreate(getPhysics(), body0, tm0, leg1, tm1))
+				{
+					j->setProjectionAngularTolerance(0);
+					j->setProjectionLinearTolerance(0);
+					j->setLimit(PxJointAngularLimitPair(-PxPi / 4, PxPi / 4, 0.1f)); // upper, lower, tolerance
+					j->setRevoluteJointFlag(PxRevoluteJointFlag::eLIMIT_ENABLED, true);
+					j->setDriveVelocity(-force);
+					j->setRevoluteJointFlag(PxRevoluteJointFlag::eDRIVE_ENABLED, true);
+					j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);
+
+					m_joints.push_back(new cJoint(body0, leg1, j));
+				}
+			}
+
+			if (parentBody)
+			{
+				PxTransform jointTm((parentTm.p + actor0Tm.p) * 0.5f);
+				PxTransform tm0 = parentTm.getInverse() * jointTm;
+				PxTransform tm1 = actor0Tm.getInverse() * jointTm;
+				//PxFixedJoint *j = PxFixedJointCreate(getPhysics(), parentBody, tm0, body0, tm1);
+				//if (PxRevoluteJoint*j = PxRevoluteJointCreate(getPhysics(), parentBody, tm0, body0, tm1))
+				if (PxSphericalJoint *j = PxSphericalJointCreate(getPhysics(), parentBody, tm0, body0, tm1))
+				{
+					//j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4));
+					//j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+				}
+			}
+
+			parentBody = body0;
+			parentTm = actor0Tm;
 		}
-		SAMPLE_FREE(shapes);
 	}
+	break;
+
+	case SPAWN_DEBUG_OBJECT9:
+		break;
+	}
+
 }
 
 
@@ -328,7 +293,7 @@ void CJointTestSample::pickup()
 @brief
 @date 2013-12-03
 */
-void CJointTestSample::onDigitalInputEvent(const SampleFramework::InputEvent &ie, bool val)
+void CSphericalJointTestSample::onDigitalInputEvent(const SampleFramework::InputEvent &ie, bool val)
 {
 	if (val)
 	{
@@ -348,7 +313,6 @@ void CJointTestSample::onDigitalInputEvent(const SampleFramework::InputEvent &ie
 			break;
 
 		case PICKUP:
-			pickup();
 			break;
 
 		case RELEASE_CURSOR:
@@ -371,14 +335,14 @@ void CJointTestSample::onDigitalInputEvent(const SampleFramework::InputEvent &ie
 @brief pointer input event
 @date 2014-02-12
 */
-void CJointTestSample::onPointerInputEvent(const SampleFramework::InputEvent& ie,
+void CSphericalJointTestSample::onPointerInputEvent(const SampleFramework::InputEvent& ie,
 	physx::PxU32 x, physx::PxU32 y, physx::PxReal dx, physx::PxReal dy, bool val)
 {
 	PhysXSample::onPointerInputEvent(ie, x, y, dx, dy, val);
 }
 
 
-void CJointTestSample::customizeSceneDesc(PxSceneDesc& sceneDesc)
+void CSphericalJointTestSample::customizeSceneDesc(PxSceneDesc& sceneDesc)
 {
 	//sceneDesc.filterShader = SampleSubmarineFilterShader;
 	//sceneDesc.simulationEventCallback = this;
@@ -390,14 +354,51 @@ void CJointTestSample::customizeSceneDesc(PxSceneDesc& sceneDesc)
 @brief
 @date 2014-02-10
 */
-void CJointTestSample::onSubstep(PxF32 dtime)
+void CSphericalJointTestSample::onSubstep(PxF32 dtime)
 {
+	m_deltaTime += dtime;
 	m_ElapsTime += dtime;
 	if (m_ElapsTime > 100) // 1 minutes
 	{
 		//gotoNextGenration();
 		m_ElapsTime = 0;
 	}
+
+	if (0 == m_genJoint)
+	{
+		++m_genJoint;
+
+		PxSceneWriteLock scopedLock(*mScene);
+	}
+	else if (1 == m_genJoint)
+	{
+		++m_genJoint;
+		PxSceneWriteLock scopedLock(*mScene);
+	}
+	else if (2 == m_genJoint)
+	{
+		++m_genJoint;
+
+		PxSceneWriteLock scopedLock(*mScene);
+		//m_body0->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
+		//m_leg0->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
+		//m_body0->clearForce();
+		//m_leg0->clearForce();
+		//m_body0->wakeUp();
+		//m_leg0->wakeUp();
+		//m_genJoint = -1;
+	}
+
+	if (m_joint1 && (m_deltaTime>1))
+	{
+		m_joint1->setDriveVelocity(m_joint1->getDriveVelocity() * -1.f);
+		m_joint2->setDriveVelocity(m_joint2->getDriveVelocity() * -1.f);
+		m_deltaTime = 0;
+	}
+
+	for (auto j : m_joints)
+		j->Update(dtime);
+
 }
 
 
@@ -405,7 +406,7 @@ void CJointTestSample::onSubstep(PxF32 dtime)
 @brief generate material
 @date 2014-02-25
 */
-RenderMaterial* CJointTestSample::GetMaterial(const PxVec3 &rgb, bool applyVertexColor) // applyVertexColor=true
+RenderMaterial* CSphericalJointTestSample::GetMaterial(const PxVec3 &rgb, bool applyVertexColor) // applyVertexColor=true
 {
 	int key = (int)(rgb.x * 1000000 + rgb.y * 10000 + rgb.z * 100);
 	key = key * 10 + applyVertexColor;
@@ -418,10 +419,32 @@ RenderMaterial* CJointTestSample::GetMaterial(const PxVec3 &rgb, bool applyVerte
 	const PxReal opacity = 1.0f;
 	const bool doubleSided = false;
 	const PxU32 id = 0xffffffff;
-	RenderMaterial *newMaterial = SAMPLE_NEW(RenderMaterial)(*getRenderer(), rgb, opacity, 
+	RenderMaterial *newMaterial = SAMPLE_NEW(RenderMaterial)(*getRenderer(), rgb, opacity,
 		doubleSided, id, NULL, true, false, false, applyVertexColor);
 
 	m_Materials[key] = newMaterial;
 	return newMaterial;
 }
 
+
+PxRigidDynamic* CSphericalJointTestSample::createBox2(const PxTransform& tm, const PxVec3& dims, const PxVec3* linVel,
+	RenderMaterial* material, PxReal density)
+{
+	PxSceneWriteLock scopedLock(*mScene);
+	PxRigidDynamic* box = PxCreateDynamic(*mPhysics, tm, PxBoxGeometry(dims), *mMaterial, density);
+	PX_ASSERT(box);
+
+	box->setActorFlag(PxActorFlag::eVISUALIZATION, true);
+	box->setAngularDamping(0.5f);
+	box->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
+
+	mScene->addActor(*box);
+	addPhysicsActors(box);
+
+	if (linVel)
+		box->setLinearVelocity(*linVel);
+
+	createRenderObjectsFromActor(box, material);
+
+	return box;
+}

@@ -3,15 +3,14 @@
 #pragma once
 
 #include "PhysXSample.h"
+#include "joint.h"
 
-//DECLARE_TYPE_NAME(CEvc)
-class CJointTestSample : public PhysXSample
+class CRevoluteJointTestSample : public PhysXSample
 	, public PxSimulationEventCallback
-	//, public memmonitor::Monitor<CEvc, TYPE_NAME(CEvc)>
 {
 public:
-	CJointTestSample(PhysXSampleApplication& app);
-	virtual ~CJointTestSample();
+	CRevoluteJointTestSample(PhysXSampleApplication& app);
+	virtual ~CRevoluteJointTestSample();
 
 	// Implements PxSimulationEventCallback
 	virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {}
@@ -36,15 +35,16 @@ public:
 	virtual	void descriptionRender(PxU32 x, PxU32 y, PxU8 textAlpha) {}
 	virtual PxU32 getDebugObjectTypes() const;
 	Picking* GetPicking();
-	RenderMaterial* GetMaterial(const PxVec3 &rgb, bool applyVertexColor=true);
+	RenderMaterial* GetMaterial(const PxVec3 &rgb, bool applyVertexColor = true);
 
 
 protected:
 	void spawnNode(const int key);
-	void pickup();
 	virtual void onDigitalInputEvent(const SampleFramework::InputEvent&, bool val);
 	virtual void onPointerInputEvent(const SampleFramework::InputEvent& ie, physx::PxU32 x, physx::PxU32 y, physx::PxReal dx, physx::PxReal dy, bool val) override;
 	virtual void onShutdown();
+	PxRigidDynamic* createBox2(const PxTransform &tm, const PxVec3& dims, const PxVec3* linVel = NULL,
+		RenderMaterial* material = NULL, PxReal density = 1.0f);
 
 
 private:
@@ -52,11 +52,20 @@ private:
 	map<int, RenderMaterial*> m_Materials; // key=r*100,g*10,b, value = material
 
 	double m_ElapsTime; // for gentic algorithm epoch
+	int m_genJoint;
+	PxRigidDynamic *m_body0;
+	PxRigidDynamic *m_leg0;
+	PxRevoluteJoint *m_joint1;
+	PxRevoluteJoint *m_joint2;
+	float m_deltaTime;
+
+	vector<cJoint*> m_joints;
+
 };
 
 
-inline PxU32 CJointTestSample::getDebugObjectTypes() const {
+inline PxU32 CRevoluteJointTestSample::getDebugObjectTypes() const {
 	return DEBUG_OBJECT_BOX | DEBUG_OBJECT_SPHERE | DEBUG_OBJECT_CAPSULE | DEBUG_OBJECT_CONVEX;
 }
 
-inline Picking* CJointTestSample::GetPicking() { return mPicking; }
+inline Picking* CRevoluteJointTestSample::GetPicking() { return mPicking; }

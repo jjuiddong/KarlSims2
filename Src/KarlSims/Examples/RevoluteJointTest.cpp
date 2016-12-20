@@ -28,12 +28,12 @@
 using namespace SampleRenderer;
 using namespace SampleFramework;
 
-REGISTER_SAMPLE(CRevoluteJointTestSample, "RevoluteJoint Test")
+REGISTER_SAMPLE(CRevoluteJointSample, "RevoluteJoint Test")
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CRevoluteJointTestSample::CRevoluteJointTestSample(PhysXSampleApplication& app) :
+CRevoluteJointSample::CRevoluteJointSample(PhysXSampleApplication& app) :
 	PhysXSample(app)
 	, m_ElapsTime(NULL)
 	, m_genJoint(-1)
@@ -44,11 +44,11 @@ CRevoluteJointTestSample::CRevoluteJointTestSample(PhysXSampleApplication& app) 
 	mCreateGroundPlane = true;
 }
 
-CRevoluteJointTestSample::~CRevoluteJointTestSample()
+CRevoluteJointSample::~CRevoluteJointSample()
 {
 }
 
-void CRevoluteJointTestSample::onShutdown()
+void CRevoluteJointSample::onShutdown()
 {
 	for (auto kv : m_Materials)
 		kv.second->release();
@@ -62,7 +62,7 @@ void CRevoluteJointTestSample::onShutdown()
 }
 
 
-void CRevoluteJointTestSample::onInit()
+void CRevoluteJointSample::onInit()
 {
 	PhysXSample::onInit();
 
@@ -80,24 +80,24 @@ void CRevoluteJointTestSample::onInit()
 @brief
 @date 2014-01-16
 */
-void CRevoluteJointTestSample::customizeRender()
+void CRevoluteJointSample::customizeRender()
 {
 }
 
 
-void	CRevoluteJointTestSample::onTickPreRender(float dtime)
+void	CRevoluteJointSample::onTickPreRender(float dtime)
 {
 	PhysXSample::onTickPreRender(dtime);
 	PxSceneWriteLock scopedLock(*mScene);
 }
 
-void	CRevoluteJointTestSample::onTickPostRender(float dtime)
+void	CRevoluteJointSample::onTickPostRender(float dtime)
 {
 	PhysXSample::onTickPostRender(dtime);
 }
 
 
-void CRevoluteJointTestSample::collectInputEvents(std::vector<const SampleFramework::InputEvent*>& inputEvents)
+void CRevoluteJointSample::collectInputEvents(std::vector<const SampleFramework::InputEvent*>& inputEvents)
 {
 	PhysXSample::collectInputEvents(inputEvents);
 	getApplication().getPlatform()->getSampleUserInput()->unregisterInputEvent(CAMERA_SPEED_INCREASE);
@@ -139,7 +139,7 @@ void CRevoluteJointTestSample::collectInputEvents(std::vector<const SampleFramew
 @brief
 @date 2013-12-03
 */
-void CRevoluteJointTestSample::spawnNode(const int key)
+void CRevoluteJointSample::spawnNode(const int key)
 {
 	PxSceneWriteLock scopedLock(*mScene);
 
@@ -563,7 +563,7 @@ void CRevoluteJointTestSample::spawnNode(const int key)
 @brief
 @date 2013-12-03
 */
-void CRevoluteJointTestSample::onDigitalInputEvent(const SampleFramework::InputEvent &ie, bool val)
+void CRevoluteJointSample::onDigitalInputEvent(const SampleFramework::InputEvent &ie, bool val)
 {
 	if (val)
 	{
@@ -605,14 +605,14 @@ void CRevoluteJointTestSample::onDigitalInputEvent(const SampleFramework::InputE
 @brief pointer input event
 @date 2014-02-12
 */
-void CRevoluteJointTestSample::onPointerInputEvent(const SampleFramework::InputEvent& ie,
+void CRevoluteJointSample::onPointerInputEvent(const SampleFramework::InputEvent& ie,
 	physx::PxU32 x, physx::PxU32 y, physx::PxReal dx, physx::PxReal dy, bool val)
 {
 	PhysXSample::onPointerInputEvent(ie, x, y, dx, dy, val);
 }
 
 
-void CRevoluteJointTestSample::customizeSceneDesc(PxSceneDesc& sceneDesc)
+void CRevoluteJointSample::customizeSceneDesc(PxSceneDesc& sceneDesc)
 {
 	//sceneDesc.filterShader = SampleSubmarineFilterShader;
 	//sceneDesc.simulationEventCallback = this;
@@ -624,7 +624,7 @@ void CRevoluteJointTestSample::customizeSceneDesc(PxSceneDesc& sceneDesc)
 @brief
 @date 2014-02-10
 */
-void CRevoluteJointTestSample::onSubstep(PxF32 dtime)
+void CRevoluteJointSample::onSubstep(PxF32 dtime)
 {
 	m_deltaTime += dtime;
 	m_ElapsTime += dtime;
@@ -676,7 +676,7 @@ void CRevoluteJointTestSample::onSubstep(PxF32 dtime)
 @brief generate material
 @date 2014-02-25
 */
-RenderMaterial* CRevoluteJointTestSample::GetMaterial(const PxVec3 &rgb, bool applyVertexColor) // applyVertexColor=true
+RenderMaterial* CRevoluteJointSample::GetMaterial(const PxVec3 &rgb, bool applyVertexColor) // applyVertexColor=true
 {
 	int key = (int)(rgb.x * 1000000 + rgb.y * 10000 + rgb.z * 100);
 	key = key * 10 + applyVertexColor;
@@ -697,7 +697,7 @@ RenderMaterial* CRevoluteJointTestSample::GetMaterial(const PxVec3 &rgb, bool ap
 }
 
 
-PxRigidDynamic* CRevoluteJointTestSample::createBox2(const PxTransform& tm, const PxVec3& dims, const PxVec3* linVel,
+PxRigidDynamic* CRevoluteJointSample::createBox2(const PxTransform& tm, const PxVec3& dims, const PxVec3* linVel,
 	RenderMaterial* material, PxReal density)
 {
 	PxSceneWriteLock scopedLock(*mScene);

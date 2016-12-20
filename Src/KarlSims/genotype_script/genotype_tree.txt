@@ -1,0 +1,44 @@
+
+
+Body: type=kinematic shape=box dim=0.5,1,0.5 material=0,0.75,0 mass=1
+
+	joint: type=fixed 
+		rot = 0,1,0,0 pos=0,3,0 
+		limit= -1, 1, 0.1
+		velocity=5
+		period=1
+		randpos=1,1,1.5
+		randorient=0,0,0
+		link = Body
+
+	joint: type=fixed
+		rot = -0.5,0,0,1 pos=1,1,0 
+		limit= -1, 1, 0.1
+		link = Body
+
+	joint: type=fixed
+		rot = 0.5,0,0,1 pos=-1,1,0 
+		limit= -1, 1, 0.1
+		link = Body
+
+	joint: type=fixed
+		rot = -0.6,1,0,0 pos=0,1,-1 
+		limit= -1, 1, 0.1
+		link = Body
+
+	joint: type=fixed
+		rot = 0.6,1,0,0 pos=0,1,1 
+		limit= -1, 1, 0.1
+		link = Body
+
+
+main: type=kinematic dim=0.1,0.1,0.1 material=0,0.75,0 mass=1 depth=4
+
+	joint: type=fixed pos=0,1,0 
+		limit = 0.785375, 0.785375, 0.1
+		velocity = 15
+		period = 20
+		link = Body
+
+
+

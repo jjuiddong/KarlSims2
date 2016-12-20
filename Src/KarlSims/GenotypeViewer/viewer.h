@@ -3,14 +3,14 @@
 #pragma once
 
 #include "PhysXSample.h"
-#include "joint.h"
+#include "creature/SimpleCreature.h"
 
-class CRevoluteJointSample : public PhysXSample
+class cGenotypeViewer : public PhysXSample
 	, public PxSimulationEventCallback
 {
 public:
-	CRevoluteJointSample(PhysXSampleApplication& app);
-	virtual ~CRevoluteJointSample();
+	cGenotypeViewer(PhysXSampleApplication& app);
+	virtual ~cGenotypeViewer();
 
 	// Implements PxSimulationEventCallback
 	virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {}
@@ -51,6 +51,8 @@ private:
 	vector<PxRigidActor*> m_Planet; // composite ground physx actor
 	map<int, RenderMaterial*> m_Materials; // key=r*100,g*10,b, value = material
 
+	vector<evc::cSimpleCreature*> m_creatures;
+
 	double m_ElapsTime; // for gentic algorithm epoch
 	int m_genJoint;
 	PxRigidDynamic *m_body0;
@@ -58,14 +60,11 @@ private:
 	PxRevoluteJoint *m_joint1;
 	PxRevoluteJoint *m_joint2;
 	float m_deltaTime;
-
-	vector<cJoint*> m_joints;
-
 };
 
 
-inline PxU32 CRevoluteJointSample::getDebugObjectTypes() const {
+inline PxU32 cGenotypeViewer::getDebugObjectTypes() const {
 	return DEBUG_OBJECT_BOX | DEBUG_OBJECT_SPHERE | DEBUG_OBJECT_CAPSULE | DEBUG_OBJECT_CONVEX;
 }
 
-inline Picking* CRevoluteJointSample::GetPicking() { return mPicking; }
+inline Picking* cGenotypeViewer::GetPicking() { return mPicking; }

@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="viewer.h" />
+    <ClInclude Include="..\comlib\creature\GenotypeParser.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\PhenotypeNode.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\SimpleCreature.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\Genotype.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\physx\PhysxManager.h">
+      <Filter>comlib\physx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\Utility.h">
+      <Filter>comlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\Joint.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GenotypeViewer.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="viewer.cpp" />
+    <ClCompile Include="..\comlib\creature\GenotypeParser.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\PhenotypeNode.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\SimpleCreature.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\Genotype.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\physx\PhysxManager.cpp">
+      <Filter>comlib\physx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\Joint.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="comlib">
+      <UniqueIdentifier>{5ff86024-3e27-4766-ba9d-1c3ebb6e21c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="comlib\physx">
+      <UniqueIdentifier>{8b30ae1c-99a4-4dde-b008-146377851f5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="comlib\creature">
+      <UniqueIdentifier>{fe723558-011d-4f93-b4eb-e53aed6a9346}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

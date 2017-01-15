@@ -31,6 +31,9 @@ namespace evc
 			const genotype::sBody &body, const genotype::sJoint *joint=NULL,
 			const Vector3 &pos = Vector3(0, 0, 0), const int depth=0);
 
+		phenotype::cNode* CreateTerminalNode(phenotype::cNode *parent,
+			const genotype::sBody &body);
+
 		PxRigidDynamic* CreateBody(phenotype::cNode *parent, const genotype::sBody &body
 			, const genotype::sJoint * joint = NULL, const Vector3 &pos = Vector3(0, 0, 0)
 			, const int depth = 0);

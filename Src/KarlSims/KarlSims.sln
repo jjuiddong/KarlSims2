@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EvolvedVirtualCreatures", "EvolvedVirtualCreatures\EvolvedVirtualCreatures.vcxproj", "{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PxToolkit", "..\..\..\PhysX-3.3\PhysXSDK\Samples\PxToolkit\compiler\vc14win32\PxToolkit.vcxproj", "{AE26EE6F-9143-D9EE-6480-FA134AAAFC48}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleFramework-MT", "..\..\..\PhysX-3.3\PhysXSDK\Samples\SampleFramework\framework\compiler\vc14win32\SampleFramework-MT.vcxproj", "{DEB7F8C6-4512-D660-4816-212EF0806A58}"
@@ -37,30 +35,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.checked|x64.ActiveCfg = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.checked|x64.Build.0 = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.checked|x86.ActiveCfg = Release|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.checked|x86.Build.0 = Release|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug_DLL|x64.ActiveCfg = Debug|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug_DLL|x64.Build.0 = Debug|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug_DLL|x86.ActiveCfg = Debug|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug_DLL|x86.Build.0 = Debug|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug|x64.ActiveCfg = Debug|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug|x64.Build.0 = Debug|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug|x86.ActiveCfg = Debug|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Debug|x86.Build.0 = Debug|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.profile|x64.ActiveCfg = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.profile|x64.Build.0 = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.profile|x86.ActiveCfg = Release|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.profile|x86.Build.0 = Release|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release_DLL|x64.ActiveCfg = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release_DLL|x64.Build.0 = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release_DLL|x86.ActiveCfg = Release|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release_DLL|x86.Build.0 = Release|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release|x64.ActiveCfg = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release|x64.Build.0 = Release|x64
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release|x86.ActiveCfg = Release|Win32
-		{D3D3DD1B-9C2F-4A56-BA9F-44774D1CFAB6}.Release|x86.Build.0 = Release|Win32
 		{AE26EE6F-9143-D9EE-6480-FA134AAAFC48}.checked|x64.ActiveCfg = checked|Win32
 		{AE26EE6F-9143-D9EE-6480-FA134AAAFC48}.checked|x86.ActiveCfg = checked|Win32
 		{AE26EE6F-9143-D9EE-6480-FA134AAAFC48}.checked|x86.Build.0 = checked|Win32

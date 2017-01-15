@@ -18,12 +18,15 @@ public:
 	PxRigidDynamic* CreateBox(const PxTransform &tm, const PxVec3& dims, const PxVec3* linVel = NULL,
 		RenderMaterial* material = NULL, PxReal density = 1.0f);
 
+	PxRigidDynamic* CreateSphere(const PxTransform &tm, const PxReal radius, const PxVec3* linVel = NULL,
+		RenderMaterial* material = NULL, PxReal density = 1.0f);
+
 	RenderMaterial* GetMaterial(const Vector3 &rgb, bool applyVertexColor=true);
 
 	PxPhysics& GetPhysics();
 
 
-protected:
+public:
 	PhysXSample *m_sample;
 	map<int, RenderMaterial*> m_Materials; // key=r*100,g*10,b, value = material
 };

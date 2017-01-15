@@ -36,9 +36,16 @@ bool cJoint::Init(phenotype::cNode *actor0, phenotype::cNode *actor1,
 	// setting joint position, localFrame0, localFrame1
 	const PxTransform actor0Tm = actor0->m_rigidBody->getGlobalPose();
 	const PxTransform actor1Tm = actor1->m_rigidBody->getGlobalPose();
-	const PxTransform jointTm((actor0Tm.p + actor1Tm.p) * 0.5f);
+
+	const PxTransform jointTm = (joint.rotAxis.IsEmpty()) ?
+		PxTransform((actor0Tm.p + actor1Tm.p) * 0.5f) 
+		: PxTransform((actor0Tm.p + actor1Tm.p) * 0.5f, 
+			PxQuat(joint.rotAxis.x, PxVec3(joint.rotAxis.y, joint.rotAxis.z, joint.rotAxis.w)));
 	const PxTransform tm0 = actor0Tm.getInverse() * jointTm;
 	const PxTransform tm1 = actor1Tm.getInverse() * jointTm;
+
+	m_tm0 = tm0;
+	m_tm1 = tm1;
 
 	switch (joint.type)
 	{
@@ -130,4 +137,21 @@ void cJoint::Clear()
 {
 	SAFE_RELEASE(m_pxJoint);
 	SAFE_DELETE(m_actor1); // delete child Phenotype Node
+}
+
+
+void cJoint::GetOutputNerves(OUT vector<double> &out) const
+{
+	if (m_actor1)
+		m_actor1->GetOutputNerves(out);
+}
+
+
+// return total neuron count
+int cJoint::GetNeuronCount() const
+{
+	int count = 0;
+	if (m_actor1)
+		count += m_actor1->GetNeuronCount();
+	return count;
 }

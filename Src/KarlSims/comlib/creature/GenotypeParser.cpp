@@ -198,8 +198,9 @@ sBody* cParser::BuildBody(sParseTree *tree)
 		body->shape = eShapeType::BOX;
 
 	body->dim = String2Vector3(tree->attrs["dim"]);
+	body->radius = (float)atof(tree->attrs["radius"].c_str());
 	body->mtrl = String2Vector3(tree->attrs["material"]);
-	body->mass = (float)atof(tree->attrs["mass"].c_str());
+	body->density = (float)atof(tree->attrs["density"].c_str());
 	body->depth = atoi(tree->attrs["depth"].c_str());
 	return body;
 }
@@ -223,8 +224,10 @@ sJoint* cParser::BuildJoint(sParseTree *tree)
 
 	joint->pos = String2Vector3(tree->attrs["pos"]);
 	joint->rot = String2Vector4(tree->attrs["rot"]);
+	joint->rotAxis = String2Vector4(tree->attrs["rot_axis"]);
 	joint->limit = String2Vector3(tree->attrs["limit"]);
 	joint->velocity = (float)atof(tree->attrs["velocity"].c_str());
+	joint->terminalOnly = atoi(tree->attrs["terminalonly"].c_str()) > 0;
 	joint->period = (float)atof(tree->attrs["period"].c_str());
 	joint->linkName = tree->attrs["link"];
 	return joint;

@@ -19,10 +19,12 @@ sJoint& sJoint::operator=(const sJoint &rhs)
 	{
 		type = rhs.type;
 		rot = rhs.rot;
+		rotAxis = rhs.rotAxis;
 		pos = rhs.pos;
 		limit = rhs.limit;
 		period = rhs.period;
 		velocity = rhs.velocity;
+		terminalOnly = rhs.terminalOnly;
 		linkName = rhs.linkName;
 		link = rhs.link;
 	}
@@ -48,9 +50,10 @@ sBody& sBody::operator=(const sBody &rhs)
 		type = rhs.type;
 		shape = rhs.shape;
 		dim = rhs.dim;
+		radius = rhs.radius;
 		mtrl = rhs.mtrl;
 		depth = rhs.depth;
-		mass = rhs.mass;
+		density = rhs.density;
 		parent = rhs.parent;
 		joints = rhs.joints;
 	}

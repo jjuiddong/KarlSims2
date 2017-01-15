@@ -161,7 +161,7 @@ void cGenotypeViewer::spawnNode(const int key)
 	case SPAWN_DEBUG_OBJECT2:
 	{
 		// Create Creatures
-		evc::cSimpleCreature *creature = new evc::cSimpleCreature();
+		evc::cCreature *creature = new evc::cCreature();
 		creature->Init("../genotype_script/genotype_creature.txt", Vector3(0, 5, 0));
 		m_creatures.push_back(creature);
 	}
@@ -170,7 +170,7 @@ void cGenotypeViewer::spawnNode(const int key)
 	case SPAWN_DEBUG_OBJECT3:
 	{
 		// Create Grass Creatures
-		evc::cSimpleCreature *creature = new evc::cSimpleCreature();
+		evc::cCreature *creature = new evc::cCreature();
 		creature->Init("../genotype_script/genotype_grass.txt", Vector3(0, 0, 0));
 		m_creatures.push_back(creature);
 	}
@@ -179,7 +179,16 @@ void cGenotypeViewer::spawnNode(const int key)
 	case SPAWN_DEBUG_OBJECT4:
 	{
 		// Create Tree Creatures
-		evc::cSimpleCreature *creature = new evc::cSimpleCreature();
+		evc::cCreature *creature = new evc::cCreature();
+		creature->Init("../genotype_script/genotype_flower.txt", Vector3(0, 0, 0));
+		m_creatures.push_back(creature);
+	}
+	break;
+
+	case SPAWN_DEBUG_OBJECT5:
+	{
+		// Create Tree Creatures
+		evc::cCreature *creature = new evc::cCreature();
 		creature->Init("../genotype_script/genotype_tree.txt", Vector3(0, 0, 0));
 		m_creatures.push_back(creature);
 	}

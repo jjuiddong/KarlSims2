@@ -1,5 +1,5 @@
 
-Left: shape=box dim=0.1,0.5,0.5 material=0.75,0,0 mass=1
+Left: shape=box dim=0.1,0.5,0.5 material=0.75,0,0 density=1
 
 	joint: type=fixed 
 		pos= 0,2,0 
@@ -8,7 +8,7 @@ Left: shape=box dim=0.1,0.5,0.5 material=0.75,0,0 mass=1
 		period=1
 		link = Left
 
-Right: shape=box dim=0.1,0.5,0.5 material=0,0,0.75 mass=1
+Right: shape=box dim=0.1,0.5,0.5 material=0,0,0.75 density=1
 
 	joint: type=fixed 
 		pos= 0,2,0 
@@ -18,7 +18,7 @@ Right: shape=box dim=0.1,0.5,0.5 material=0,0,0.75 mass=1
 		link = Right
 
 
-Body: shape=box dim=0.3,0.3,0.3 material=0.75,0.75,0 mass=1
+Body: shape=box dim=0.3,0.3,0.3 material=0.75,0.75,0 density=1
 
 	joint: type=fixed 
 		pos=0,2,0, 
@@ -41,7 +41,7 @@ Body: shape=box dim=0.3,0.3,0.3 material=0.75,0.75,0 mass=1
 
 
 
-main: type=kinematic shape=box dim=0.1,0.1,0.1 material=0,0.75,0 mass=1
+main: type=kinematic shape=box dim=0.1,0.1,0.1 material=0,0.75,0 density=1
 depth=10
 	joint: type=fixed pos=0,1,0 
 		limit = 0.785375, 0.785375, 0.1

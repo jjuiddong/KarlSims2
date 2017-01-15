@@ -145,24 +145,71 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\comlib\creature\AngularSensor.h" />
+    <ClInclude Include="..\comlib\creature\Creature.h" />
+    <ClInclude Include="..\comlib\creature\Effector.h" />
+    <ClInclude Include="..\comlib\creature\GeneticAlgorithm.h" />
+    <ClInclude Include="..\comlib\creature\Genome.h" />
     <ClInclude Include="..\comlib\creature\Genotype.h" />
     <ClInclude Include="..\comlib\creature\GenotypeParser.h" />
     <ClInclude Include="..\comlib\creature\Joint.h" />
+    <ClInclude Include="..\comlib\creature\MuscleEffector.h" />
+    <ClInclude Include="..\comlib\creature\NeuralNet.h" />
     <ClInclude Include="..\comlib\creature\PhenotypeNode.h" />
+    <ClInclude Include="..\comlib\creature\PhotoSensor.h" />
+    <ClInclude Include="..\comlib\creature\Sensor.h" />
     <ClInclude Include="..\comlib\creature\SimpleCreature.h" />
+    <ClInclude Include="..\comlib\creature\VisionSensor.h" />
+    <ClInclude Include="..\comlib\FileLoader.h" />
     <ClInclude Include="..\comlib\physx\PhysxManager.h" />
+    <ClInclude Include="..\comlib\pointcloud\CircumCenter.h" />
+    <ClInclude Include="..\comlib\pointcloud\Delaunay3D.h" />
+    <ClInclude Include="..\comlib\pointcloud\GeomPredicates.h" />
+    <ClInclude Include="..\comlib\pointcloud\Tetrahedron.h" />
+    <ClInclude Include="..\comlib\pointcloud\Triangle3.h" />
+    <ClInclude Include="..\comlib\renderer\MeshCompositionUtility.h" />
+    <ClInclude Include="..\comlib\renderer\RenderBezierActor.h" />
+    <ClInclude Include="..\comlib\renderer\RenderComposition.h" />
+    <ClInclude Include="..\comlib\renderer\RendererBezierShape.h" />
+    <ClInclude Include="..\comlib\renderer\RendererCompositionShape.h" />
+    <ClInclude Include="..\comlib\renderer\RendererModelShape.h" />
+    <ClInclude Include="..\comlib\renderer\RendererSkinModelShape.h" />
+    <ClInclude Include="..\comlib\renderer\RenderModelActor.h" />
+    <ClInclude Include="..\comlib\structdef.h" />
     <ClInclude Include="..\comlib\Utility.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="viewer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\comlib\creature\Creature.cpp" />
+    <ClCompile Include="..\comlib\creature\Effector.cpp" />
+    <ClCompile Include="..\comlib\creature\GeneticAlgorithm.cpp" />
+    <ClCompile Include="..\comlib\creature\Genome.cpp" />
     <ClCompile Include="..\comlib\creature\Genotype.cpp" />
     <ClCompile Include="..\comlib\creature\GenotypeParser.cpp" />
     <ClCompile Include="..\comlib\creature\Joint.cpp" />
+    <ClCompile Include="..\comlib\creature\NeuralNet.cpp" />
     <ClCompile Include="..\comlib\creature\PhenotypeNode.cpp" />
+    <ClCompile Include="..\comlib\creature\PhotoSensor.cpp" />
     <ClCompile Include="..\comlib\creature\SimpleCreature.cpp" />
+    <ClCompile Include="..\comlib\creature\VisionSensor.cpp" />
+    <ClCompile Include="..\comlib\FileLoader.cpp" />
     <ClCompile Include="..\comlib\physx\PhysxManager.cpp" />
+    <ClCompile Include="..\comlib\pointcloud\CircumCenter.cpp" />
+    <ClCompile Include="..\comlib\pointcloud\Delaunay3D.cpp" />
+    <ClCompile Include="..\comlib\pointcloud\GeomPredicates.cpp" />
+    <ClCompile Include="..\comlib\pointcloud\Tetrahedron.cpp" />
+    <ClCompile Include="..\comlib\pointcloud\Triangle3.cpp" />
+    <ClCompile Include="..\comlib\renderer\MeshCompositionUtility.cpp" />
+    <ClCompile Include="..\comlib\renderer\RenderBezierActor.cpp" />
+    <ClCompile Include="..\comlib\renderer\RenderComposition.cpp" />
+    <ClCompile Include="..\comlib\renderer\RendererBezierShape.cpp" />
+    <ClCompile Include="..\comlib\renderer\RendererCompositionShape.cpp" />
+    <ClCompile Include="..\comlib\renderer\RendererModelShape.cpp" />
+    <ClCompile Include="..\comlib\renderer\RendererSkinModelShape.cpp" />
+    <ClCompile Include="..\comlib\renderer\RenderModelActor.cpp" />
+    <ClCompile Include="..\comlib\Utility.cpp" />
     <ClCompile Include="GenotypeViewer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

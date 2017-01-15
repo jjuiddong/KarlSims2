@@ -5,11 +5,13 @@
 
 #pragma once
 
+#define  _CRT_SECURE_NO_WARNINGS
+
+
 #include "targetver.h"
 
 #include <stdio.h>
 #include <tchar.h>
-
 
 
 
@@ -28,7 +30,7 @@
 #include <RenderMaterial.h>
 #include <RenderBaseActor.h>
 #include <d3d9.h>
-
+#include "PhysXSample.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -61,6 +63,9 @@ using std::stringstream;
 typedef unsigned int u_int;
 #endif
 
+#include "physx/PhysxManager.h"
+#include "Utility.h"
+#include "FileLoader.h"
 
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -79,15 +84,14 @@ typedef unsigned int u_int;
 //
 //#include "utility/Utility.h"
 //#include "utility/FileLoader.h"
-//#include "renderer/RenderModelActor.h"
-//#include "renderer/RenderBezierActor.h"
-//#include "renderer/RenderComposition.h"
-//#include "renderer/RendererCompositionShape.h"
+#include "renderer/RenderModelActor.h"
+#include "renderer/RenderBezierActor.h"
+#include "renderer/RenderComposition.h"
+#include "renderer/RendererCompositionShape.h"
 //
 //#include "global.h"
 
-#include "physx/PhysxManager.h"
-#include "Utility.h"
+
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "d3dx9d.lib")

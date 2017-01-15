@@ -3,7 +3,7 @@
 #pragma once
 
 #include "PhysXSample.h"
-#include "creature/SimpleCreature.h"
+#include "creature/Creature.h"
 
 class cGenotypeViewer : public PhysXSample
 	, public PxSimulationEventCallback
@@ -51,7 +51,7 @@ private:
 	vector<PxRigidActor*> m_Planet; // composite ground physx actor
 	map<int, RenderMaterial*> m_Materials; // key=r*100,g*10,b, value = material
 
-	vector<evc::cSimpleCreature*> m_creatures;
+	vector<evc::cCreature*> m_creatures;
 
 	double m_ElapsTime; // for gentic algorithm epoch
 	int m_genJoint;

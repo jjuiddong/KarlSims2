@@ -1,0 +1,43 @@
+
+Left: shape=box dim=1,0.3,0.2 material=0.75,0,0 density=1
+Right: shape=box dim=0.3,1,0.2 material=0.5,0.5,1 density=1
+
+
+Body: shape=box dim=0.7,1,0.3 material=0.75,0.75,0 density=1
+
+	joint: type=revolute 
+		pos=0,-3,0
+		limit = -1,1,0.1
+		velocity=5
+		period=1
+		randpos=1,1,1.5
+		randorient=0,0,0
+		link = Body
+
+	joint: type=revolute
+		rot = 0,0,0,1 pos=-2.5,0,0 
+		rot_axis = -1.57,0,0,1
+		limit = -0.785375, 0.785375, 0.1
+		velocity=5
+		period=1
+		#rot = 0,0,0,1 pos=-2.5,0,0 
+		#limit = 0.785375, 0.785375, 0.1
+		link = Left
+
+	joint: type=revolute 
+		rot = -1.57,0,0,1 pos=0,2,0 
+		rot_axis = 1.57,0,0,1
+		limit = -0.785375, 0.785375, 0.1
+		velocity=5
+		period=1
+		link = Right
+
+
+main: dim=0.1,0.1,0.1 material=0,0.75,0 density=1
+
+	joint: type=fixed pos=0,-1.2,0 
+		limit = 0.785375, 0.785375, 0.1
+		link = Body
+
+
+

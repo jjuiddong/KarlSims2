@@ -1,6 +1,6 @@
 
 
-Body: type=kinematic shape=box dim=0.5,1,0.5 material=0,0.75,0 mass=1
+Body: type=kinematic shape=box dim=0.5,1,0.5 material=0,0.75,0 density=1
 
 	joint: type=fixed 
 		rot = 0,1,0,0 pos=0,3,0 
@@ -32,7 +32,7 @@ Body: type=kinematic shape=box dim=0.5,1,0.5 material=0,0.75,0 mass=1
 		link = Body
 
 
-main: type=kinematic dim=0.1,0.1,0.1 material=0,0.75,0 mass=1 depth=4
+main: type=kinematic dim=0.1,0.1,0.1 material=0,0.75,0 density=1 depth=4
 
 	joint: type=fixed pos=0,1,0 
 		limit = 0.785375, 0.785375, 0.1

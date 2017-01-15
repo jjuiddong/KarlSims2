@@ -1,6 +1,9 @@
 //
-// 2016-12-19, jjuiddong
-// phenotype joint
+// 2013-12-10, jjuiddong
+//		phenotype joint
+//
+// 2016-12-19
+//		Refactoring
 //
 
 #pragma once
@@ -22,6 +25,9 @@ namespace evc {
 			bool Update(const float dtime);
 			void Clear();
 
+			void GetOutputNerves(OUT vector<double> &out) const;
+			int GetNeuronCount() const;
+
 
 		public:
 			genotype::sJoint m_joint;
@@ -30,8 +36,8 @@ namespace evc {
 			PxJoint *m_pxJoint;
 			float m_incT; // for switch velocity
 			//double m_relativeAngle; // radian, -pi ~ 0 ~ pi
-			//PxTransform m_Tm0; // initial tm0
-			//PxTransform m_Tm1; // initial tm1
+			PxTransform m_tm0; // initial tm0
+			PxTransform m_tm1; // initial tm1
 		};
 
 } }

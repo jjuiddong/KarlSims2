@@ -59,6 +59,48 @@ PxRigidDynamic* cPhysxMgr::CreateBox(const PxTransform& tm, const PxVec3& dims,
 }
 
 
+PxRigidDynamic* cPhysxMgr::CreateSphere(const PxTransform& tm, const PxReal radius,
+	const PxVec3* linVel, RenderMaterial* material, PxReal density)
+//{
+//	PxSceneWriteLock scopedLock(*mScene);
+//	PxRigidDynamic* sphere = PxCreateDynamic(*mPhysics, PxTransform(pos), PxSphereGeometry(radius), *mMaterial, density);
+//	PX_ASSERT(sphere);
+//
+//	SetupDefaultRigidDynamic(*sphere);
+//	mScene->addActor(*sphere);
+//	addPhysicsActors(sphere);
+//
+//	if (linVel)
+//		sphere->setLinearVelocity(*linVel);
+//
+//	createRenderObjectsFromActor(sphere, material);
+//
+//	return sphere;
+//}
+{
+	RETV(!m_sample, NULL);
+
+	PxSceneWriteLock scopedLock(*m_sample->mScene);
+	PxRigidDynamic* sphere = PxCreateDynamic(*m_sample->mPhysics, tm,
+		PxSphereGeometry(radius), *m_sample->mMaterial, density);
+	PX_ASSERT(sphere);
+
+	sphere->setActorFlag(PxActorFlag::eVISUALIZATION, true);
+	sphere->setAngularDamping(0.5f);
+	sphere->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
+
+	m_sample->mScene->addActor(*sphere);
+	m_sample->addPhysicsActors(sphere);
+
+	if (linVel)
+		sphere->setLinearVelocity(*linVel);
+
+	m_sample->createRenderObjectsFromActor(sphere, material);
+
+	return sphere;
+}
+
+
 /**
 @brief generate material
 @date 2014-02-25

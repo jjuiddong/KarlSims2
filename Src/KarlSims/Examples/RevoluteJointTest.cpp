@@ -435,7 +435,7 @@ void CRevoluteJointSample::spawnNode(const int key)
 
 			if (parentBody)
 			{
-				PxTransform jointTm( (parentTm.p + actor0Tm.p) * 0.5f );
+				PxTransform jointTm((parentTm.p + actor0Tm.p) * 0.5f);
 				PxTransform tm0 = parentTm.getInverse() * jointTm;
 				PxTransform tm1 = actor0Tm.getInverse() * jointTm;
 				//PxFixedJoint *j = PxFixedJointCreate(getPhysics(), parentBody, tm0, body0, tm1);
@@ -547,13 +547,40 @@ void CRevoluteJointSample::spawnNode(const int key)
 			}
 
 		} // end for
-
-
 	}
 	break;
 
 	case SPAWN_DEBUG_OBJECT9:
-		break;
+	{
+		// Spawning Revolution Axis
+		//   ||
+		//   ||====
+		//   ||
+		PxSceneWriteLock scopedLock(*mScene);
+
+		const PxReal h = 4;
+		PxVec3 actor0Pos(0, h, 0);
+		PxVec3 actor1Pos(4, h, 0);
+		PxRigidDynamic *body0 = createBox(actor0Pos, PxVec3(1,2,0.5f), &PxVec3(0, 0, 0), GetMaterial(PxVec3(1, 1, 1)));
+		PxRigidDynamic *body1 = createBox(actor1Pos, PxVec3(2,1, 0.5f), &PxVec3(0, 0, 0), GetMaterial(PxVec3(0.5f, 0.5f, 0.5f)));
+
+		PxQuat revoluteAxis(1.57f, PxVec3(0, 0, -1));
+		PxTransform jointTm((actor0Pos + actor1Pos)*0.5f, revoluteAxis);
+		PxTransform tm0 = PxTransform(actor0Pos).getInverse() * jointTm;
+		PxTransform tm1 = PxTransform(actor1Pos).getInverse() * jointTm;
+
+		if (PxRevoluteJoint*j = PxRevoluteJointCreate(getPhysics(), body0, tm0, body1, tm1))
+		{
+			//j->setLimit(PxJointAngularLimitPair(-PxPi / 4, PxPi / 4, 0.1f)); // upper, lower, tolerance
+			//j->setRevoluteJointFlag(PxRevoluteJointFlag::eLIMIT_ENABLED, true);
+			j->setProjectionAngularTolerance(0);
+			j->setDriveVelocity(5);
+			j->setRevoluteJointFlag(PxRevoluteJointFlag::eDRIVE_ENABLED, true);
+			j->setConstraintFlag(PxConstraintFlag::ePROJECTION, true);
+		}
+	}
+	break;
+
 	}
 
 }

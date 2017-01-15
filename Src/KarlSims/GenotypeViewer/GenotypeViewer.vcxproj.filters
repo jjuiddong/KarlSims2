@@ -25,6 +25,81 @@
     <ClInclude Include="..\comlib\creature\Joint.h">
       <Filter>comlib\creature</Filter>
     </ClInclude>
+    <ClInclude Include="..\comlib\creature\Creature.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\NeuralNet.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\Effector.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\MuscleEffector.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\PhotoSensor.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\Sensor.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\VisionSensor.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\AngularSensor.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\GeneticAlgorithm.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\creature\Genome.h">
+      <Filter>comlib\creature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\RendererModelShape.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\RendererSkinModelShape.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\RenderModelActor.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\MeshCompositionUtility.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\RenderBezierActor.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\RenderComposition.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\RendererBezierShape.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\renderer\RendererCompositionShape.h">
+      <Filter>comlib\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\FileLoader.h">
+      <Filter>comlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\structdef.h">
+      <Filter>comlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\pointcloud\CircumCenter.h">
+      <Filter>comlib\pointcloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\pointcloud\Delaunay3D.h">
+      <Filter>comlib\pointcloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\pointcloud\Tetrahedron.h">
+      <Filter>comlib\pointcloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\pointcloud\Triangle3.h">
+      <Filter>comlib\pointcloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\comlib\pointcloud\GeomPredicates.h">
+      <Filter>comlib\pointcloud</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GenotypeViewer.cpp" />
@@ -48,6 +123,72 @@
     <ClCompile Include="..\comlib\creature\Joint.cpp">
       <Filter>comlib\creature</Filter>
     </ClCompile>
+    <ClCompile Include="..\comlib\creature\Creature.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\NeuralNet.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\Effector.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\PhotoSensor.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\VisionSensor.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\GeneticAlgorithm.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\creature\Genome.cpp">
+      <Filter>comlib\creature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\RendererModelShape.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\RendererSkinModelShape.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\RenderModelActor.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\MeshCompositionUtility.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\RenderBezierActor.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\RenderComposition.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\RendererBezierShape.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\renderer\RendererCompositionShape.cpp">
+      <Filter>comlib\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\FileLoader.cpp">
+      <Filter>comlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\Utility.cpp">
+      <Filter>comlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\pointcloud\Delaunay3D.cpp">
+      <Filter>comlib\pointcloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\pointcloud\Tetrahedron.cpp">
+      <Filter>comlib\pointcloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\pointcloud\Triangle3.cpp">
+      <Filter>comlib\pointcloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\pointcloud\CircumCenter.cpp">
+      <Filter>comlib\pointcloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\comlib\pointcloud\GeomPredicates.cpp">
+      <Filter>comlib\pointcloud</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="comlib">
@@ -58,6 +199,12 @@
     </Filter>
     <Filter Include="comlib\creature">
       <UniqueIdentifier>{fe723558-011d-4f93-b4eb-e53aed6a9346}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="comlib\renderer">
+      <UniqueIdentifier>{d1feec86-9c62-4054-a77a-f89147b5ab9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="comlib\pointcloud">
+      <UniqueIdentifier>{602c32a3-da21-428d-959e-cc388f0db548}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

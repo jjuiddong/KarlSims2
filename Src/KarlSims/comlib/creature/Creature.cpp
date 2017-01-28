@@ -243,18 +243,21 @@ PxRigidDynamic* cCreature::CreateBody(
 void cCreature::CreateSkinningMesh()
 {
 	m_tmPalette.resize(m_nodes.size());
+	for each (auto node in m_nodes)
+		m_tmPalette[node->m_PaletteIndex] = node->m_rigidBody->getGlobalPose();
+
 	CreateRenderComposition(m_phRoot);
 
-	if (m_phRoot && m_phRoot->m_pOriginalShapeRenderer)
+	if (m_phRoot && m_phRoot->m_defaultRenderer)
 	{
-		if (m_phRoot->m_pShapeRenderer)
+		if (m_phRoot->m_renderer)
 		{
-			cPhysxMgr::Get()->m_sample->addRenderObject(m_phRoot->m_pShapeRenderer);
+			cPhysxMgr::Get()->m_sample->addRenderObject(m_phRoot->m_renderer);
 		}
 		else
 		{
-			m_phRoot->m_pShapeRenderer = m_phRoot->m_pOriginalShapeRenderer;
-			cPhysxMgr::Get()->m_sample->addRenderObject(m_phRoot->m_pShapeRenderer);
+			m_phRoot->m_renderer = m_phRoot->m_defaultRenderer;
+			cPhysxMgr::Get()->m_sample->addRenderObject(m_phRoot->m_renderer);
 		}
 		m_tmPalette[m_phRoot->m_PaletteIndex] = m_phRoot->m_rigidBody->getGlobalPose();
 	}
@@ -273,7 +276,7 @@ void cCreature::CreateRenderComposition(phenotype::cNode *node)
 	RenderMaterial *material = cPhysxMgr::Get()->GetMaterial(node->m_body.mtrl);
 
 	// Create RenderComposition
-	if (!node->m_pOriginalShapeRenderer)
+	if (!node->m_defaultRenderer)
 	{
 		PxRigidDynamic *rigidActor0 = node->m_rigidBody;
 		PxShape *shape0;
@@ -284,23 +287,25 @@ void cCreature::CreateRenderComposition(phenotype::cNode *node)
 			{
 				RenderComposition *newRenderer = 
 					SAMPLE_NEW(RenderComposition)(*sample->getRenderer(),
-						node->m_PaletteIndex, m_tmPalette, renderActor0->getRenderShape(), material);
+						node->m_PaletteIndex, m_tmPalette, renderActor0->getRenderShape(), 
+						rigidActor0->getGlobalPose(), material);
 
 				renderActor0->setRendering(false);
 				newRenderer->setEnableCameraCull(true);
+				newRenderer->setTransform(rigidActor0->getGlobalPose());
 
-				node->m_pOriginalShapeRenderer = newRenderer;
+				node->m_defaultRenderer = newRenderer;
 				sample->removeRenderObject(renderActor0);
 				sample->unlink(renderActor0, shape0, rigidActor0);
 			}
 		}
 	}
 
-	// Remove Exist ShapeRenderer, If Diffrent
-	if (node->m_pShapeRenderer && (node->m_pShapeRenderer != node->m_pOriginalShapeRenderer))
+	// Remove Exist ShapeRenderer, If Different
+	if (node->m_renderer && (node->m_renderer != node->m_defaultRenderer))
 	{
-		sample->removeRenderObject(node->m_pShapeRenderer);
-		node->m_pShapeRenderer = NULL;
+		sample->removeRenderObject(node->m_renderer);
+		node->m_renderer = NULL;
 	}
 
 	// Create Composition Child Shape
@@ -308,21 +313,25 @@ void cCreature::CreateRenderComposition(phenotype::cNode *node)
 	{
 		cNode *child = (cNode*)joint->m_actor1;
 
-		RenderComposition *parentRenderer = (node->m_pShapeRenderer) ? node->m_pShapeRenderer : node->m_pOriginalShapeRenderer;
-		RenderComposition *childRenderer = (child->m_pShapeRenderer) ? child->m_pShapeRenderer : child->m_pOriginalShapeRenderer;
+		RenderComposition *parentRenderer = (node->m_renderer) ? node->m_renderer : node->m_defaultRenderer;
+		RenderComposition *childRenderer = (child->m_renderer) ? child->m_renderer : child->m_defaultRenderer;
+
+		const PxTransform parentTm = parentRenderer->getTransform();
+		const PxTransform childTm = childRenderer->getTransform();
 
 		RenderComposition *newRenderer = SAMPLE_NEW(RenderComposition)(*sample->getRenderer(),
 			node->m_PaletteIndex, child->m_PaletteIndex,
 			node->m_PaletteIndex, m_tmPalette,
-			(SampleRenderer::RendererCompositionShape*)parentRenderer->getRenderShape(), joint->m_tm0,
-			(SampleRenderer::RendererCompositionShape*)childRenderer->getRenderShape(), joint->m_tm1);
+			(SampleRenderer::RendererCompositionShape*)parentRenderer->getRenderShape(), parentTm,
+			(SampleRenderer::RendererCompositionShape*)childRenderer->getRenderShape(), childTm);
 
-		newRenderer->setEnableCameraCull(true);
-
+		newRenderer->setEnableCameraCull(false);
+		newRenderer->setTransform(parentTm);
+		
 		// remove shape renderer
-		if (node->m_pShapeRenderer && (node->m_pShapeRenderer != node->m_pOriginalShapeRenderer))
-			sample->removeRenderObject(node->m_pShapeRenderer);
+		if (node->m_renderer && (node->m_renderer != node->m_defaultRenderer))
+			sample->removeRenderObject(node->m_renderer);
 
-		node->m_pShapeRenderer = newRenderer;
+		node->m_renderer = newRenderer;
 	}
 }

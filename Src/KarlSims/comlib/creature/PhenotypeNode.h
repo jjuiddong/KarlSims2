@@ -43,8 +43,8 @@ namespace evc { namespace phenotype {
 		vector<cEffector*> m_effectors;
 
 		// Rendering
-		RenderComposition *m_pShapeRenderer;
-		RenderComposition *m_pOriginalShapeRenderer;
+		RenderComposition *m_renderer;
+		RenderComposition *m_defaultRenderer;
 		int m_PaletteIndex; // tm palette index
 
 		// NeuralNet

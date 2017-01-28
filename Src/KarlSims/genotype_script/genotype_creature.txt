@@ -5,10 +5,8 @@ Body: shape=box dim=0.7,1,0.3 material=0.75,0.75,0 density=1
 	joint: type=revolute 
 		pos=0,-3,0
 		limit = -1,1,0.1
-		velocity=5
-		period=1
-		randpos=1,1,1.5
-		randorient=0,0,0
+		velocity = 5
+		period = 1
 		link = Body
 
 

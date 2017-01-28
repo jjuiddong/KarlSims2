@@ -25,7 +25,7 @@ public:
 
 	RenderComposition(SampleRenderer::Renderer& renderer, const int paletteIndex,
 		const vector<PxTransform> &tmPalette, SampleRenderer::RendererShape *shape0, 
-		RenderMaterial *material0);
+		const PxTransform &tm, RenderMaterial *material0);
 
 	RenderComposition(const RenderComposition&);
 	virtual ~RenderComposition();

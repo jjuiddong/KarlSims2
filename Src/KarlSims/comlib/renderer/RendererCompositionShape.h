@@ -26,7 +26,7 @@ namespace SampleRenderer
 			RendererCompositionShape *shape1, const PxTransform &tm1, const PxReal* uvs=NULL);
 
 		RendererCompositionShape(Renderer &renderer, const int paletteIndex, const vector<PxTransform> &tmPalette,
-			RendererShape *shape0, RenderMaterial *material0 );
+			RendererShape *shape0, const PxTransform &tm, RenderMaterial *material0 );
 
 		virtual ~RendererCompositionShape(void);
 
@@ -41,25 +41,7 @@ namespace SampleRenderer
 			RendererShape *shape1, const PxTransform &tm1, 
 			const int additionalVtxBuffSize, const int additionalIdxBuffSize );
 
-		void GenerateCompositionShape( RendererShape *shape0, RenderMaterial *material0 );
-
-		//void GenerateTriangleFrom4Vector( void *positions, void *normals, void *bones, void *colors, 
-		//	PxU32 stride, PxU32 startVtxIdx, 
-		//	PxU16 *indices, PxU32 startIndexIdx,
-		//	const PxVec3 &center, PxVec3 v0, PxVec3 v1, PxVec3 v2, PxVec3 v3,
-		//	PxU32 b0, PxU32 b1, PxU32 b2, PxU32 b3,
-		//	PxU32 c0, PxU32 c1, PxU32 c2, PxU32 c3,
-		//	vector<PxU16> &faceIndices, OUT vector<PxU16> &outfaceIndices
-		//	);
-
-		void FindMostCloseFace( 
-			const int findParentBoneIndex, const int findChildBoneIndex,
-			void *positions, PxU32 positionStride, 
-			void *normals, PxU32 normalStride,
-			void *bones, PxU32 boneStride, 
-			const PxU32 numVerts, PxU16 *indices, PxU32 idx0Size, PxU32 idx1Size,
-			OUT std::pair<int,int> &closeFace0, OUT std::pair<int,int> &closeFace1,
-			OUT set<PxU16> &vtxIndices0, OUT set<PxU16> &vtxIndices1 );
+		void GenerateCompositionShape( RendererShape *shape0, const PxTransform &tm, RenderMaterial *material0 );
 
 		void FindMostCloseFace2(
 			RendererShape *shape0, const PxTransform &tm0,
@@ -68,19 +50,8 @@ namespace SampleRenderer
 			OUT set<PxU16> &vtxIndices0, OUT set<PxU16> &vtxIndices1,
 			OUT vector<PxVec3> &vertices0, OUT vector<PxVec3> &vertices1);
 
-
 		void CalculateCenterPoint( std::pair<int,int> closeFace0, std::pair<int,int> closeFace1,
 			void *positions, PxU32 stride, PxU16 *indices, OUT PxVec3 &out );
-
-		void CopyToSourceVertex(void *positions, void *normals, PxU32 stride, const int numVerts);
-
-		void CopyLocalVertexToSourceVtx( const RendererCompositionShape *shape0, const RendererCompositionShape *shape1,
-			void *normals, PxU32 normalStride, const PxU32 numVerts, PxU16 *indices, const PxU32 idxSize, const PxU32 startCloseIdx,
-			const vector<PxU16> &closeVtxIndices);
-		
-		//void CalculateNormal( const vector<PxU16> &indicesBuff, vector<PxVec3> &vtxBuff, vector<PxVec3> &normBuff );
-		void ApplyTransform(void *positions, void *normals, PxU32 stride, const int numVerts, 
-			const PxTransform &tm);
 
 
 	private:

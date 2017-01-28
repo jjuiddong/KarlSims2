@@ -36,8 +36,8 @@ namespace evc {
 			PxJoint *m_pxJoint;
 			float m_incT; // for switch velocity
 			//double m_relativeAngle; // radian, -pi ~ 0 ~ pi
-			PxTransform m_tm0; // initial tm0
-			PxTransform m_tm1; // initial tm1
+			PxTransform m_tm0; // PxJoint initial tm0
+			PxTransform m_tm1; // PxJoint initial tm1
 		};
 
 } }

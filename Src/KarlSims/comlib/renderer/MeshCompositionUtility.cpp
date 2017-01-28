@@ -303,7 +303,8 @@ void SampleRenderer::CalculateCenterPoint( const int boneIndex, void *positions,
 			const PxU32 &b  =  *(PxU32*)(((PxU8*)bones) + (stride * i));
 			if (boneIndex == b)
 			{
-				center += (tm.getInverse() * PxTransform(p)).p;
+				//center += (tm.getInverse() * PxTransform(p)).p;
+				center += (tm * PxTransform(p)).p;
 				++count;
 			}
 		}

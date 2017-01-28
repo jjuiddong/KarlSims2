@@ -24,10 +24,10 @@ RenderComposition::RenderComposition(SampleRenderer::Renderer& renderer,
 
 RenderComposition::RenderComposition(SampleRenderer::Renderer& renderer, 
 	const int paletteIndex, const vector<PxTransform> &tmPalette, SampleRenderer::RendererShape *shape0,
-	RenderMaterial *material0 ) : 
+	const PxTransform &tm, RenderMaterial *material0 ) : 
 	m_PaletteIndex(paletteIndex)
 {
-	RendererShape* rs = new RendererCompositionShape(renderer, paletteIndex, tmPalette, shape0, material0);
+	RendererShape* rs = new RendererCompositionShape(renderer, paletteIndex, tmPalette, shape0, tm, material0);
 	setRenderShape(rs);
 }
 

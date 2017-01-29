@@ -310,7 +310,7 @@ void SampleRenderer::CalculateCenterPoint( const int boneIndex, void *positions,
 		}
 		else
 		{
-			center +=p;
+			center += p;
 			++count;
 		}
 	}

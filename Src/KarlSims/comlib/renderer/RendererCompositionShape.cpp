@@ -38,124 +38,126 @@ RendererCompositionShape::RendererCompositionShape(Renderer &renderer,
 {
 	set<PxU16> vtxIndices0, vtxIndices1;
 	vector<PxVec3> vertices0, vertices1;
-	FindMostCloseFace2(shape0, PxTransform::createIdentity(), 
-		shape1, PxTransform::createIdentity(),
-		parentShapeIndex, childShapeIndex, vtxIndices0, vtxIndices1, vertices0, vertices1);
+	FindMostCloseFace(shape0, shape1, parentShapeIndex, childShapeIndex, vtxIndices0, vtxIndices1, vertices0, vertices1);
 
+	// Delaunay Triangulations
+	vector<Vector3> vertices;
+	for (auto p : vertices0)
+		vertices.push_back(Vector3(p.x, p.y, p.z));
+	for (auto p : vertices1)
+		vertices.push_back(Vector3(p.x, p.y, p.z));
+	delaunay3d::cDelaunay3D delaunay;
+	delaunay.Triangulate(vertices);
+
+	// Apply Delaunay Triangulations
+	const int addVtx = delaunay.m_tetrahedrones.size() * 12;
+	const int addIndices = delaunay.m_tetrahedrones.size() * 12;
+	GenerateCompositionShape(shape0, PxTransform::createIdentity(), shape1, PxTransform::createIdentity(), addVtx, addIndices);
+
+	PxU32 stride = 0;
+	void *positions = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_POSITION, stride);
+	void *normals = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_NORMAL, stride);
+	void *colors = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_COLOR, stride);
+	//void *uvs = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_TEXCOORD0, stride);
+	void *bones = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_BONEINDEX, stride);
+	PxU16 *indices = (PxU16*)m_indexBuffer->lock();
+
+	RendererMesh *mesh0 = shape0->getMesh();
+	RendererMesh *mesh1 = shape1->getMesh();
+	SampleRenderer::RendererVertexBuffer **vtx0 = mesh0->getVertexBuffersEdit();
+	SampleRenderer::RendererIndexBuffer *idx0 = mesh0->getIndexBufferEdit();
+	const PxU32 numVtxBuff0 = mesh0->getNumVertexBuffers();
+
+	SampleRenderer::RendererVertexBuffer **vtx1 = mesh1->getVertexBuffersEdit();
+	SampleRenderer::RendererIndexBuffer *idx1 = mesh1->getIndexBufferEdit();
+	const PxU32 numVtxBuff1 = mesh1->getNumVertexBuffers();
+
+	if ((numVtxBuff0 > 0) && (numVtxBuff1 > 0))
 	{
-		// Delaunay Triangulations
-		vector<Vector3> vertices;
-		for (auto p : vertices0)
-			vertices.push_back(Vector3(p.x, p.y, p.z));
-		for (auto p : vertices1)
-			vertices.push_back(Vector3(p.x, p.y, p.z));
-		delaunay3d::cDelaunay3D delaunay;
-		delaunay.Triangulate(vertices);
+		const PxU32 vtx0Size = vtx0[0]->getMaxVertices();
+		const PxU32 vtx1Size = vtx1[0]->getMaxVertices();
+		const PxU32 idx0Size = idx0->getMaxIndices();
+		const PxU32 idx1Size = idx1->getMaxIndices();
 
-		// Apply Delaunay Triangulations
-		const int addVtx = delaunay.m_tetrahedrones.size() * 12;
-		const int addIndices = delaunay.m_tetrahedrones.size() * 12;
-		GenerateCompositionShape(shape0, PxTransform::createIdentity(), shape1, PxTransform::createIdentity(), addVtx, addIndices);
+		BYTE *pos = (BYTE*)positions + (stride * (vtx0Size + vtx1Size));
+		BYTE *nor = (BYTE*)normals + (stride * (vtx0Size + vtx1Size));
+		BYTE *col = (BYTE*)colors + (stride * (vtx0Size + vtx1Size));
+		BYTE *bon = (BYTE*)bones + (stride * (vtx0Size + vtx1Size));
+		PxU16 *idx = indices + (idx0Size + idx1Size);
 
-		PxU32 stride = 0;
-		void *positions = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_POSITION, stride);
-		void *normals = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_NORMAL, stride);
-		void *colors = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_COLOR, stride);
-		//void *uvs = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_TEXCOORD0, stride);
-		void *bones = m_vertexBuffer->lockSemantic(RendererVertexBuffer::SEMANTIC_BONEINDEX, stride);
-		PxU16 *indices = (PxU16*)m_indexBuffer->lock();
+		m_SrcVertex.resize(vtx0Size + vtx1Size + addVtx);
+		m_SrcNormal.resize(vtx0Size + vtx1Size + addVtx);
 
+		// Copy to Src Vertex,Normal Buffer to Skinning Animation
+		for (u_int i = 0; i < vtx0Size + vtx1Size; ++i)
 		{
-			RendererMesh *mesh0 = shape0->getMesh();
-			RendererMesh *mesh1 = shape1->getMesh();
-			SampleRenderer::RendererVertexBuffer **vtx0 = mesh0->getVertexBuffersEdit();
-			SampleRenderer::RendererIndexBuffer *idx0 = mesh0->getIndexBufferEdit();
-			const PxU32 numVtxBuff0 = mesh0->getNumVertexBuffers();
+			const PxU8 b = (*(PxU8*)((BYTE*)bones + (stride * i))) % 100;
+			const PxTransform itm = tmPalette[b].getInverse(); // convert global pose to local pos
+			const PxVec3 p = (itm * PxTransform(*(PxVec3*)((BYTE*)positions + (stride * i)))).p;
+			const PxVec3 n = (PxTransform(itm.q) * PxTransform(*(PxVec3*)((BYTE*)normals + (stride * i)))).p;
 
-			SampleRenderer::RendererVertexBuffer **vtx1 = mesh1->getVertexBuffersEdit();
-			SampleRenderer::RendererIndexBuffer *idx1 = mesh1->getIndexBufferEdit();
-			const PxU32 numVtxBuff1 = mesh1->getNumVertexBuffers();
-
-			if ((numVtxBuff0 > 0) && (numVtxBuff1 > 0))
-			{
-				const PxU32 vtx0Size = vtx0[0]->getMaxVertices();
-				const PxU32 vtx1Size = vtx1[0]->getMaxVertices();
-				const PxU32 idx0Size = idx0->getMaxIndices();
-				const PxU32 idx1Size = idx1->getMaxIndices();
-
-				BYTE *pos = (BYTE*)positions + (stride * (vtx0Size + vtx1Size));
-				BYTE *nor = (BYTE*)normals + (stride * (vtx0Size + vtx1Size));
-				BYTE *bon = (BYTE*)bones + (stride * (vtx0Size + vtx1Size));
-				PxU16 *idx = indices + (idx0Size + idx1Size);
-				
-				m_SrcVertex.resize(vtx0Size + vtx1Size + addVtx);
-				m_SrcNormal.resize(vtx0Size + vtx1Size + addVtx);
-
-				// Copy to Src Vertex,Normal Buffer to Skinning Animation
-				for (u_int i = 0; i < vtx0Size + vtx1Size; ++i)
-				{
-					const PxU8 b = *(PxU8*)((BYTE*)bones + (stride * i));
-					const PxTransform itm = tmPalette[b].getInverse(); // convert global pose to local pos
-					const PxVec3 p = (itm * PxTransform(*(PxVec3*)((BYTE*)positions + (stride * i)))).p;
-					const PxVec3 n = (PxTransform(itm.q) * PxTransform(*(PxVec3*)((BYTE*)normals + (stride * i)))).p;
-
-					m_SrcVertex[i] = p;
-					m_SrcNormal[i] = n;
-				}
-
-				// Add Additional Face to Src Vertex,Normal Buffer
-				PxTransform itm0 = tm0.getInverse(); // convert global pose to local pos
-				PxTransform itm1 = tm1.getInverse();
-				int addN = 0;
-				int srcIdx = vtx0Size + vtx1Size;
-				for (auto &tet : delaunay.m_tetrahedrones)
-				{
-					for (int i = 0; i < 4; ++i)
-					{
-						for (int k = 2; k >= 0; --k) // CCW, Counter ClockWise
-						{
-							const int m = tet.m_tr[i].m_indices[k];
-							PxVec3 p = evc::Vec3toPxVec3( (*tet.m_vertices)[m] );
-							PxVec3 n = evc::Vec3toPxVec3(tet.m_tr[i].m_normal);
-
-							*(PxVec3*)pos = p;
-							*(PxVec3*)nor = n;
-
-							if (m < 6)
-							{
-								*(PxU32*)bon = parentShapeIndex;
-
-								m_SrcVertex[srcIdx] = (itm0 * PxTransform(p)).p;
-								m_SrcNormal[srcIdx] = (PxTransform(itm0.q) * PxTransform(n)).p;
-								++srcIdx;
-							}
-							else
-							{
-								*(PxU32*)bon = childShapeIndex;
-
-								m_SrcVertex[srcIdx] = (itm1 * PxTransform(p)).p;
-								m_SrcNormal[srcIdx] = (PxTransform(itm1.q) * PxTransform(n)).p;
-								++srcIdx;
-							}
-
-							pos += stride;
-							bon += stride;
-							nor += stride;
-							*idx++ = (vtx0Size + vtx1Size) + addN++;
-						}
-					}
-				}
-
-			}
+			m_SrcVertex[i] = p;
+			m_SrcNormal[i] = n;
 		}
 
-		m_indexBuffer->unlock();
-		m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_NORMAL);
-		m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_POSITION);
-		m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_COLOR);
-		//m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_TEXCOORD0);
-		m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_BONEINDEX);
+		// Add Additional Face to Src Vertex,Normal Buffer
+		// additional connection mesh palette index + 100
+		const PxTransform itm0 = tm0.getInverse(); // convert global pose to local pos
+		const PxTransform itm1 = tm1.getInverse();
+		const PxU32 col0 = GetColor(colors, bones, stride, vtx0Size + vtx1Size, parentShapeIndex);
+		const PxU32 col1 = GetColor(colors, bones, stride, vtx0Size + vtx1Size, childShapeIndex);
+
+		int addN = 0;
+		int srcIdx = vtx0Size + vtx1Size;
+		for (auto &tet : delaunay.m_tetrahedrones)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				for (int k = 2; k >= 0; --k) // CCW, Counter ClockWise
+				{
+					const int m = tet.m_tr[i].m_indices[k];
+					PxVec3 p = evc::Vec3toPxVec3( (*tet.m_vertices)[m] );
+					PxVec3 n = evc::Vec3toPxVec3(tet.m_tr[i].m_normal);
+
+					*(PxVec3*)pos = p;
+					*(PxVec3*)nor = n;
+
+					if (m < 6)
+					{
+						*(PxU32*)bon = parentShapeIndex + 100;
+						*(PxU32*)col = col0;
+
+						m_SrcVertex[srcIdx] = (itm0 * PxTransform(p)).p;
+						m_SrcNormal[srcIdx] = (PxTransform(itm0.q) * PxTransform(n)).p;
+						++srcIdx;
+					}
+					else
+					{
+						*(PxU32*)bon = childShapeIndex + 100;
+						*(PxU32*)col = col1;
+
+						m_SrcVertex[srcIdx] = (itm1 * PxTransform(p)).p;
+						m_SrcNormal[srcIdx] = (PxTransform(itm1.q) * PxTransform(n)).p;
+						++srcIdx;
+					}
+
+					pos += stride;
+					bon += stride;
+					nor += stride;
+					col += stride;
+					*idx++ = (vtx0Size + vtx1Size) + addN++;
+				}
+			}
+		}
 	}
+
+	m_indexBuffer->unlock();
+	m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_NORMAL);
+	m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_POSITION);
+	m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_COLOR);
+	//m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_TEXCOORD0);
+	m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_BONEINDEX);
+
 }
 
 
@@ -306,11 +308,8 @@ void RendererCompositionShape::GenerateCompositionShape(
 
 				PxTransform m = tm0 * PxTransform(p0);
 				PxTransform nm = PxTransform(tm0.q) * PxTransform(n0);
-				//PxTransform m = PxTransform(p0);
-				//PxTransform nm = PxTransform(n0);
 
 				p = m.p;
-				//n = n0;
 				n = nm.p;
 				c = c0;
 				uv[ 0] = uv0[ 0];
@@ -333,13 +332,10 @@ void RendererCompositionShape::GenerateCompositionShape(
 				PxU32 &b0  =  *(PxU32*)(((PxU8*)bones1) + (stride1 * i));
 				PxU32 &c0 = *(PxU32*)(((PxU8*)colors1) + (stride1 * i));
 
-				//PxTransform m = PxTransform(p0);
-				//PxTransform nm = PxTransform(n0);
 				PxTransform m = tm1 * PxTransform(p0);
 				PxTransform nm = PxTransform(tm1.q) * PxTransform(n0);
-				//PxTransform m = PxTransform(p0);
+
 				p = m.p;
-				//n = n0;
 				n = nm.p;
 				c = c0;
 				uv[ 0] = uv0[ 0];
@@ -430,9 +426,8 @@ void RendererCompositionShape::GenerateCompositionShape(
 // findParentBoneIndex, findChildBoneIndex 두 개의 노드로 구성된 메쉬간에 
 // 가장 가까운 면을 찾는다. 이 때, 이 두 면은 서로 바라보고 있는 것 중, 가장 작은 오차의 면을 찾는다.
 // 서로, 앞뒤로 교차된 경우, 이 함수는 실패한다.
-void RendererCompositionShape::FindMostCloseFace2(
-	RendererShape *shape0, const PxTransform &tm0,
-	RendererShape *shape1, const PxTransform &tm1,
+void RendererCompositionShape::FindMostCloseFace(
+	RendererShape *shape0, RendererShape *shape1, 
 	const int findParentBoneIndex, const int findChildBoneIndex,
 	OUT set<PxU16> &vtxIndices0, OUT set<PxU16> &vtxIndices1,
 	OUT vector<PxVec3> &vertices0, OUT vector<PxVec3> &vertices1)
@@ -488,8 +483,10 @@ void RendererCompositionShape::FindMostCloseFace2(
 	std::pair<int, int> closeFace0, closeFace1;
 
 	PxVec3 meshCenter0, meshCenter1;
-	SampleRenderer::CalculateCenterPoint(findParentBoneIndex, positions0, bones0, stride0, numVtx0, tm0, meshCenter0);
-	SampleRenderer::CalculateCenterPoint(findChildBoneIndex, positions1, bones1, stride1, numVtx1, tm1, meshCenter1);
+	SampleRenderer::CalculateCenterPoint(findParentBoneIndex, positions0, bones0, 
+		stride0, numVtx0, PxTransform::createIdentity(), meshCenter0);
+	SampleRenderer::CalculateCenterPoint(findChildBoneIndex, positions1, bones1, 
+		stride1, numVtx1, PxTransform::createIdentity(), meshCenter1);
 	PxVec3 mesh0to1V = meshCenter1 - meshCenter0;
 	PxVec3 mesh1to0V = meshCenter0 - meshCenter1;
 	mesh0to1V.normalize();
@@ -524,10 +521,9 @@ void RendererCompositionShape::FindMostCloseFace2(
 				if ((b0 != findParentBoneIndex) || (b1 != findParentBoneIndex) || (b2 != findParentBoneIndex))
 					continue;
 
-				const PxVec3 &p0_ = *(PxVec3*)(((PxU8*)positions0) + (stride0 * vidx0));
-				const PxVec3 &p1_ = *(PxVec3*)(((PxU8*)positions0) + (stride0 * vidx1));
-				const PxVec3 &p2_ = *(PxVec3*)(((PxU8*)positions0) + (stride0 * vidx2));
-
+				//const PxVec3 &p0_ = *(PxVec3*)(((PxU8*)positions0) + (stride0 * vidx0));
+				//const PxVec3 &p1_ = *(PxVec3*)(((PxU8*)positions0) + (stride0 * vidx1));
+				//const PxVec3 &p2_ = *(PxVec3*)(((PxU8*)positions0) + (stride0 * vidx2));
 				//const PxVec3 &p0 = (tm0.getInverse() * PxTransform(p0_)).p;
 				//const PxVec3 &p1 = (tm0.getInverse() * PxTransform(p1_)).p;
 				//const PxVec3 &p2 = (tm0.getInverse() * PxTransform(p2_)).p;
@@ -551,7 +547,7 @@ void RendererCompositionShape::FindMostCloseFace2(
 					center0Normal.normalize();
 				}
 
-				// 폴리곤이 두 번째, 메쉬를 향하고 있을 때만, 가장 가까운 폴리곤 구하기 후보가 된다.
+				// 폴리곤이 두 번째 메쉬를 향하고 있을 때만, 가장 가까운 폴리곤 구하기 후보가 된다.
 				if (mesh0to1V.dot(center0Normal) <= 0.f)
 				{
 					continue;
@@ -577,10 +573,9 @@ void RendererCompositionShape::FindMostCloseFace2(
 					if ((b0 != findChildBoneIndex) || (b1 != findChildBoneIndex) || (b2 != findChildBoneIndex))
 						continue;
 
-					const PxVec3 &p0_ = *(PxVec3*)(((PxU8*)positions1) + (stride1 * vidx0));
-					const PxVec3 &p1_ = *(PxVec3*)(((PxU8*)positions1) + (stride1 * vidx1));
-					const PxVec3 &p2_ = *(PxVec3*)(((PxU8*)positions1) + (stride1 * vidx2));
-
+					//const PxVec3 &p0_ = *(PxVec3*)(((PxU8*)positions1) + (stride1 * vidx0));
+					//const PxVec3 &p1_ = *(PxVec3*)(((PxU8*)positions1) + (stride1 * vidx1));
+					//const PxVec3 &p2_ = *(PxVec3*)(((PxU8*)positions1) + (stride1 * vidx2));
 					//const PxVec3 &p0 = (tm1.getInverse() * PxTransform(p0_)).p;
 					//const PxVec3 &p1 = (tm1.getInverse() * PxTransform(p1_)).p;
 					//const PxVec3 &p2 = (tm1.getInverse() * PxTransform(p2_)).p;
@@ -604,7 +599,7 @@ void RendererCompositionShape::FindMostCloseFace2(
 						center1Normal.normalize();
 					}
 
-					// 폴리곤이 첫 번째, 메쉬를 향하고 있을 때만, 가장 가까운 폴리곤 구하기 후보가 된다.
+					// 폴리곤이 첫 번째 메쉬를 향하고 있을 때만, 가장 가까운 폴리곤 구하기 후보가 된다.
 					if (mesh1to0V.dot(center1Normal) <= 0.f)
 					{
 						continue;
@@ -612,8 +607,22 @@ void RendererCompositionShape::FindMostCloseFace2(
 				}
 
 				// 가장 서로를 향하고 있는 폴리곤을 구한다. maxDot이 클수록, 서로 같은 방향을 바라보는 폴리곤이다.
+				//PxVec3 centerDir0 = center0 - meshCenter0;
+				//centerDir0.normalize();
+				//PxVec3 centerDir1 = center1 - meshCenter1;
+				//centerDir1.normalize();
+				PxVec3 center0To1 = center1 - center0;
+				center0To1.normalize();
+
 				PxVec3 len = center0 - center1;
-				const float dot = mesh1to0V.dot(center1Normal) + mesh0to1V.dot(center0Normal);
+				const float d1 = mesh1to0V.dot(center1Normal);
+				const float d2 = mesh0to1V.dot(center0Normal);
+				const float d3 = center0Normal.dot(center0To1);
+				const float d4 = center1Normal.dot(-center0To1);
+				const float d5 = center1Normal.dot(-center0Normal);
+
+				const float dot = d1 + d2 + d3 + d4 + d5;
+				//const float dot = center1Normal.dot(-center0Normal);
 				if (maxDot < dot)
 				{
 					minFaceIdx0 = i;
@@ -679,27 +688,27 @@ void RendererCompositionShape::FindMostCloseFace2(
 	vtxIndices0.insert(indices0[closeFace1.first + 2]);
 
 	{
-		const PxVec3 p = (tm0 * PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace0.first])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace0.first])))).p;
 		vertices0.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm0 * PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace0.first+1])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace0.first+1])))).p;
 		vertices0.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm0 * PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace0.first+2])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace0.first+2])))).p;
 		vertices0.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm0 * PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace1.first])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace1.first])))).p;
 		vertices0.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm0 * PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace1.first+1])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace1.first+1])))).p;
 		vertices0.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm0 * PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace1.first+2])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions0) + (stride0 * indices0[closeFace1.first+2])))).p;
 		vertices0.push_back(p);
 	}
 
@@ -724,27 +733,27 @@ void RendererCompositionShape::FindMostCloseFace2(
 	//vertices1.push_back(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace1.second + 2])));
 
 	{
-		const PxVec3 p = (tm1 * PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace0.second])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace0.second])))).p;
 		vertices1.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm1 * PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace0.second+1])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace0.second+1])))).p;
 		vertices1.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm1 * PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace0.second+2])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace0.second+2])))).p;
 		vertices1.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm1 * PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace1.second])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace1.second])))).p;
 		vertices1.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm1 * PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace1.second+1])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace1.second+1])))).p;
 		vertices1.push_back(p);
 	}
 	{
-		const PxVec3 p = (tm1 * PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace1.second+2])))).p;
+		const PxVec3 p = (PxTransform(*(PxVec3*)(((PxU8*)positions1) + (stride1 * indices1[closeFace1.second+2])))).p;
 		vertices1.push_back(p);
 	}
 
@@ -905,7 +914,7 @@ void RendererCompositionShape::ApplyPalette()
 	{
 		PxVec3 &p = *(PxVec3*)(((PxU8*)positions) + (stride * i));
 		PxVec3 &n = *(PxVec3*)(((PxU8*)normals) + (stride * i));
-		const PxU32 &bidx  =  *(PxU32*)(((PxU8*)bones) + (stride * i));
+		const PxU32 bidx  =  (*(PxU32*)(((PxU8*)bones) + (stride * i))) % 100;
 		if (bidx >= paletteSize)
 			continue;
 
@@ -923,4 +932,21 @@ void RendererCompositionShape::ApplyPalette()
 	m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_NORMAL);
 	m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_POSITION);
 	m_vertexBuffer->unlockSemantic(RendererVertexBuffer::SEMANTIC_BONEINDEX);
+}
+
+
+PxU32 RendererCompositionShape::GetColor(const void *colors, const void *bones, 
+	const PxU32 stride, const int size, const PxU8 boneId)
+{
+	const BYTE *col = (const BYTE*)colors;
+	const BYTE *bon = (const BYTE*)bones;
+	for (int i = 0; i < size; ++i)
+	{
+		if (*(PxU8*)bon == boneId)
+			return *(PxU32*)col;
+		
+		col += stride;
+		bon += stride;
+	}
+	return 0;
 }

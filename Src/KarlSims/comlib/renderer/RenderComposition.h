@@ -1,7 +1,7 @@
 // 2014-01-06, jjuiddong
 //		- Render Composition Shape
 // 
-//	2016-12-22
+// 2016-12-22
 //		- Refactoring
 //
  #pragma once

@@ -26,7 +26,7 @@ namespace genotype
 	{
 		eJointType::Enum type;
 		Vector4 rot; // angle,x,y,z (quaternion)
-		Vector4 rotAxis; // angle,x,y,z (quaternion), revolute rotation axis
+		Vector4 rotAxis; // rot_axis = angle,x,y,z (quaternion), revolute rotation axis
 		Vector3 pos;
 		Vector3 limit;
 		float period; // switch reverse velocity period (milli seconds unit)

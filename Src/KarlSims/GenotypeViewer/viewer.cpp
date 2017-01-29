@@ -74,6 +74,20 @@ void cGenotypeViewer::onInit()
 	mCameraController.init(PxVec3(0.0f, 3.0f, 10.0f), PxVec3(0.f, 0, 0.0f));
 	mCameraController.setMouseSensitivity(0.5f);
 
+	// Show Axis
+	{
+		PxSceneWriteLock scopedLock(*mScene);
+
+		PxRigidDynamic *xAxis = createBox(PxVec3(10, 0, 0), PxVec3(10, 0.1f, 0.1f), NULL, 
+			mManagedMaterials[MATERIAL_RED]);
+		xAxis->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+		PxRigidDynamic *yAxis = createBox(PxVec3(0, 10, 0), PxVec3(0.1f, 10.f, 0.1f), NULL, GetMaterial(PxVec3(0, 1, 0)));
+		yAxis->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+		PxRigidDynamic *zAxis = createBox(PxVec3(0, 0, 10), PxVec3(0.1f, 0.1f, 10.f), NULL, GetMaterial(PxVec3(0, 0, 1)));
+		zAxis->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+	}
+
+
 	m_Planet.push_back(m_Ground);
 
 	// initialize PhysX Manager instance

@@ -81,9 +81,11 @@ void cGenotypeViewer::onInit()
 		PxRigidDynamic *xAxis = createBox(PxVec3(10, 0, 0), PxVec3(10, 0.1f, 0.1f), NULL, 
 			mManagedMaterials[MATERIAL_RED]);
 		xAxis->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
-		PxRigidDynamic *yAxis = createBox(PxVec3(0, 10, 0), PxVec3(0.1f, 10.f, 0.1f), NULL, GetMaterial(PxVec3(0, 1, 0)));
+		PxRigidDynamic *yAxis = createBox(PxVec3(0, 10, 0), PxVec3(0.1f, 10.f, 0.1f), NULL, 
+			mManagedMaterials[MATERIAL_GREEN]);
 		yAxis->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
-		PxRigidDynamic *zAxis = createBox(PxVec3(0, 0, 10), PxVec3(0.1f, 0.1f, 10.f), NULL, GetMaterial(PxVec3(0, 0, 1)));
+		PxRigidDynamic *zAxis = createBox(PxVec3(0, 0, 10), PxVec3(0.1f, 0.1f, 10.f), NULL, 
+			mManagedMaterials[MATERIAL_BLUE]);
 		zAxis->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
 	}
 

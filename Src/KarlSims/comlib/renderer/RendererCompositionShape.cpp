@@ -41,17 +41,31 @@ RendererCompositionShape::RendererCompositionShape(Renderer &renderer,
 	FindMostCloseFace(shape0, shape1, parentShapeIndex, childShapeIndex, vtxIndices0, vtxIndices1, vertices0, vertices1);
 
 	// Delaunay Triangulations
+	// Remove Same Vertex
 	vector<Vector3> vertices;
 	for (auto p : vertices0)
-		vertices.push_back(Vector3(p.x, p.y, p.z));
+	{
+		auto it = std::find(vertices.begin(), vertices.end(), Vector3(p.x, p.y, -p.z));
+		if (it == vertices.end())
+			vertices.push_back(Vector3(p.x, p.y, -p.z));
+	}
+	
+	const int firstVerticeSize = vertices.size(); // because use Compare Vertex Index
+
 	for (auto p : vertices1)
-		vertices.push_back(Vector3(p.x, p.y, p.z));
+	{
+		auto it = std::find(vertices.begin(), vertices.end(), Vector3(p.x, p.y, -p.z));
+		if (it == vertices.end())
+			vertices.push_back(Vector3(p.x, p.y, -p.z));
+	}
+
 	delaunay3d::cDelaunay3D delaunay;
 	delaunay.Triangulate(vertices);
+	delaunay.OptimizeTriangle();
 
 	// Apply Delaunay Triangulations
-	const int addVtx = delaunay.m_tetrahedrones.size() * 12;
-	const int addIndices = delaunay.m_tetrahedrones.size() * 12;
+	const int addVtx = delaunay.m_tri.size() * 3;
+	const int addIndices = delaunay.m_tri.size() * 3;
 	GenerateCompositionShape(shape0, PxTransform::createIdentity(), shape1, PxTransform::createIdentity(), addVtx, addIndices);
 
 	PxU32 stride = 0;
@@ -109,44 +123,44 @@ RendererCompositionShape::RendererCompositionShape(Renderer &renderer,
 
 		int addN = 0;
 		int srcIdx = vtx0Size + vtx1Size;
-		for (auto &tet : delaunay.m_tetrahedrones)
+		for (auto &tri : delaunay.m_tri)
 		{
-			for (int i = 0; i < 4; ++i)
+			for (int k = 0; k < 3; ++k)
 			{
-				for (int k = 2; k >= 0; --k) // CCW, Counter ClockWise
+				const int m = tri.m_indices[k];
+				PxVec3 p = evc::Vec3toPxVec3( delaunay.m_vertices[m] );
+				PxVec3 n = evc::Vec3toPxVec3(tri.m_normal);
+				p.z = -p.z;
+				n.z = -n.z;
+				n.normalize();
+
+				*(PxVec3*)pos = p;
+				*(PxVec3*)nor = n;
+
+				if (m < firstVerticeSize)
 				{
-					const int m = tet.m_tr[i].m_indices[k];
-					PxVec3 p = evc::Vec3toPxVec3( (*tet.m_vertices)[m] );
-					PxVec3 n = evc::Vec3toPxVec3(tet.m_tr[i].m_normal);
+					*(PxU32*)bon = parentShapeIndex + 100;
+					*(PxU32*)col = col0;
 
-					*(PxVec3*)pos = p;
-					*(PxVec3*)nor = n;
-
-					if (m < 6)
-					{
-						*(PxU32*)bon = parentShapeIndex + 100;
-						*(PxU32*)col = col0;
-
-						m_SrcVertex[srcIdx] = (itm0 * PxTransform(p)).p;
-						m_SrcNormal[srcIdx] = (PxTransform(itm0.q) * PxTransform(n)).p;
-						++srcIdx;
-					}
-					else
-					{
-						*(PxU32*)bon = childShapeIndex + 100;
-						*(PxU32*)col = col1;
-
-						m_SrcVertex[srcIdx] = (itm1 * PxTransform(p)).p;
-						m_SrcNormal[srcIdx] = (PxTransform(itm1.q) * PxTransform(n)).p;
-						++srcIdx;
-					}
-
-					pos += stride;
-					bon += stride;
-					nor += stride;
-					col += stride;
-					*idx++ = (vtx0Size + vtx1Size) + addN++;
+					m_SrcVertex[srcIdx] = (itm0 * PxTransform(p)).p;
+					m_SrcNormal[srcIdx] = (PxTransform(itm0.q) * PxTransform(n)).p;
+					++srcIdx;
 				}
+				else
+				{
+					*(PxU32*)bon = childShapeIndex + 100;
+					*(PxU32*)col = col1;
+
+					m_SrcVertex[srcIdx] = (itm1 * PxTransform(p)).p;
+					m_SrcNormal[srcIdx] = (PxTransform(itm1.q) * PxTransform(n)).p;
+					++srcIdx;
+				}
+
+				pos += stride;
+				bon += stride;
+				nor += stride;
+				col += stride;
+				*idx++ = (vtx0Size + vtx1Size) + addN++;
 			}
 		}
 	}
@@ -607,10 +621,6 @@ void RendererCompositionShape::FindMostCloseFace(
 				}
 
 				// 가장 서로를 향하고 있는 폴리곤을 구한다. maxDot이 클수록, 서로 같은 방향을 바라보는 폴리곤이다.
-				//PxVec3 centerDir0 = center0 - meshCenter0;
-				//centerDir0.normalize();
-				//PxVec3 centerDir1 = center1 - meshCenter1;
-				//centerDir1.normalize();
 				PxVec3 center0To1 = center1 - center0;
 				center0To1.normalize();
 
@@ -622,7 +632,6 @@ void RendererCompositionShape::FindMostCloseFace(
 				const float d5 = center1Normal.dot(-center0Normal);
 
 				const float dot = d1 + d2 + d3 + d4 + d5;
-				//const float dot = center1Normal.dot(-center0Normal);
 				if (maxDot < dot)
 				{
 					minFaceIdx0 = i;
